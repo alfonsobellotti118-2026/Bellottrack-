@@ -1,13 +1,13 @@
 /* Service worker di Bellottrack food fit: tiene l'app disponibile anche senza connessione. */
-const VERSION = 'bellottrack-food-fit-v3';
+const VERSION = 'bellottrack-food-fit-v4';
 const SHELL = [
   './',
   'index.html',
   'manifest.webmanifest',
-  'icon-192.png',
-  'icon-512.png',
-  'icon-maskable-512.png',
-  'apple-touch-icon.png',
+  'icon-ab-192.png',
+  'icon-ab-512.png',
+  'icon-ab-maskable-512.png',
+  'apple-touch-icon-ab.png',
   'foto.jpg'
 ];
 // Risorse esterne da conservare dopo il primo uso (scanner e font).

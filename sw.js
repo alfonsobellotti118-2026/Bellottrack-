@@ -1,5 +1,5 @@
 /* Service worker di Bellottrack food fit: tiene l'app disponibile anche senza connessione. */
-const VERSION = 'bellottrack-food-fit-v1';
+const VERSION = 'bellottrack-food-fit-v3';
 const SHELL = [
   './',
   'index.html',
@@ -7,7 +7,8 @@ const SHELL = [
   'icon-192.png',
   'icon-512.png',
   'icon-maskable-512.png',
-  'apple-touch-icon.png'
+  'apple-touch-icon.png',
+  'foto.jpg'
 ];
 // Risorse esterne da conservare dopo il primo uso (scanner e font).
 const RUNTIME_HOSTS = ['cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'];
@@ -32,19 +33,16 @@ self.addEventListener('fetch', (event) => {
   // Il database dei prodotti va sempre in rete: lo gestisce l'app.
   if (url.hostname.endsWith('openfoodfacts.org')) return;
 
-  // Pagine e file dell'app: prima la copia salvata, poi aggiornamento in sottofondo.
+  // File dell'app: prima la rete, così gli aggiornamenti arrivano subito; senza rete la copia salvata.
   if (url.origin === self.location.origin) {
     event.respondWith(
-      caches.match(req, { ignoreSearch: true }).then((cached) => {
-        const network = fetch(req).then((res) => {
-          if (res && res.ok) {
-            const copy = res.clone();
-            caches.open(VERSION).then((cache) => cache.put(req, copy));
-          }
-          return res;
-        }).catch(() => cached || (req.mode === 'navigate' ? caches.match('index.html') : undefined));
-        return cached || network;
-      })
+      fetch(req).then((res) => {
+        if (res && res.ok) {
+          const copy = res.clone();
+          caches.open(VERSION).then((cache) => cache.put(req, copy));
+        }
+        return res;
+      }).catch(() => caches.match(req, { ignoreSearch: true }).then((c) => c || (req.mode === 'navigate' ? caches.match('index.html') : undefined)))
     );
     return;
   }

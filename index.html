@@ -4,77 +4,46 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Bellottrack food fit</title>
-<meta name="theme-color" content="#2B50E6">
-<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#0B0B0C">
+<meta name="color-scheme" content="dark">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bellottrack">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: una colonna stretta da telefono. In alto la data, poi il totale del giorno con le tre barre dei macro,
-   il modulo per aggiungere un pasto, l'elenco del giorno, la settimana e gli obiettivi. */
+/* Tema palestra: nero ferro, rosso sangue e oro. Le barre di avanzamento vanno dal blu freddo al rosso caldo. */
 :root {
-  --bg: #ECEFF3;
-  --surface: #FFFFFF;
-  --ink: #141A22;
-  --muted: #586272;
-  --line: #D7DDE5;
-  --track: #E3E8EE;
-  --accent: #2B50E6;
-  --on-accent: #FFFFFF;
-  --carbs: #BE7A12;
-  --protein: #D0393D;
-  --fat: #12847B;
-  --warn: #B3261E;
-  --font-display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
-  --font-body: "Barlow", "Helvetica Neue", Arial, sans-serif;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0E1218;
-    --surface: #161B23;
-    --ink: #E8ECF2;
-    --muted: #97A2B2;
-    --line: #262F3D;
-    --track: #232B38;
-    --accent: #8CA3FF;
-    --on-accent: #0E1218;
-    --carbs: #E3A13F;
-    --protein: #FF7B79;
-    --fat: #4FC3B8;
-    --warn: #FF8A80;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0E1218;
-  --surface: #161B23;
-  --ink: #E8ECF2;
-  --muted: #97A2B2;
-  --line: #262F3D;
-  --track: #232B38;
-  --accent: #8CA3FF;
-  --on-accent: #0E1218;
-  --carbs: #E3A13F;
-  --protein: #FF7B79;
-  --fat: #4FC3B8;
-  --warn: #FF8A80;
   color-scheme: dark;
-}
-
-* { box-sizing: border-box; }
-:root {
-  color-scheme: light;
+  --bg: #0B0B0C;
+  --surface: #151517;
+  --raise: #1E1E21;
+  --line: #2D2D32;
+  --track: #26262A;
+  --ink: #F3F3F0;
+  --muted: #A0A0A8;
+  --red: #E0201F;
+  --red-deep: #8E1111;
+  --gold: #F2B01E;
+  --on-red: #FFFFFF;
+  --warn: #FF6B5E;
+  --carbs: #F2B01E;
+  --protein: #FF5A4E;
+  --fat: #35C9B8;
+  --heat: linear-gradient(90deg, #3B9DFF 0%, #27D3B0 28%, #E8D22E 55%, #FF8A1F 80%, #F0262B 100%);
+  --heat-v: linear-gradient(0deg, #3B9DFF 0%, #27D3B0 28%, #E8D22E 55%, #FF8A1F 80%, #F0262B 100%);
+  --font-display: "Anton", "Oswald", "Arial Narrow", Impact, sans-serif;
+  --font-body: "Barlow", "Helvetica Neue", Arial, sans-serif;
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   -webkit-text-size-adjust: 100%;
 }
+* { box-sizing: border-box; }
 html { background: var(--bg); }
 [hidden] { display: none !important; }
 body {
@@ -84,166 +53,204 @@ body {
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.45;
-  padding-block: 16px 40px;
+  padding-block: 12px 40px;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
-.wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
-h1, h2, .num { font-family: var(--font-display); font-weight: 700; margin: 0; }
-h2 { font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+h1, h2, h3, .num { margin: 0; font-family: var(--font-display); font-weight: 400; }
+h2 { display: flex; align-items: center; gap: 10px; font-size: 19px; letter-spacing: 0.06em; text-transform: uppercase; }
+h2 .ic { width: 30px; height: 15px; color: var(--gold); flex: none; }
 button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+svg.ic { display: block; fill: currentColor; }
 
-.top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-h1 { font-size: 28px; letter-spacing: 0.01em; }
-.sync { font-size: 13px; color: var(--muted); min-height: 1em; }
+/* Banner con atleta */
+.hero {
+  position: relative; overflow: hidden; aspect-ratio: 2.14 / 1; min-height: 168px; border-radius: 12px; border: 1px solid var(--line);
+  background: #0B0B0C url("foto.jpg") right center / cover no-repeat;
+  display: flex; align-items: flex-end; padding: 16px;
+}
+.hero::after { content: ""; position: absolute; inset: 0; z-index: 1; background:
+  linear-gradient(90deg, rgba(11,11,12,0.9) 0%, rgba(11,11,12,0.55) 38%, rgba(11,11,12,0) 62%),
+  linear-gradient(0deg, rgba(224,32,31,0.28) 0%, rgba(224,32,31,0) 45%); }
+.hero-text { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.hero .logo { width: 64px; height: 24px; color: var(--gold); }
+.hero h1 { font-size: 36px; line-height: 0.98; letter-spacing: 0.01em; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+.hero h1 .fit { display: block; color: var(--red); font-size: 31px; }
+.sync { font-size: 13px; color: var(--muted); min-height: 1.2em; }
 
 .datebar { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px; }
-.datebar .navbtn {
-  height: 44px; border: 1px solid var(--line); background: var(--surface); border-radius: 10px;
-  font-size: 22px; line-height: 1; display: flex; align-items: center; justify-content: center;
-}
+.navbtn { height: 44px; border: 1px solid var(--line); background: var(--surface); border-radius: 10px; font-size: 24px; line-height: 1; display: flex; align-items: center; justify-content: center; }
 .datelabel { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
 #date-label { font-weight: 600; text-transform: capitalize; overflow-wrap: anywhere; }
-#today { border: 0; background: none; color: var(--accent); font-size: 14px; font-weight: 600; padding: 2px 8px; }
+#today { border: 0; background: none; color: var(--gold); font-size: 14px; font-weight: 700; padding: 2px 8px; }
 
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+.mode { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.modebtn {
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 8px; text-align: left; min-width: 0;
+  padding: 10px 12px; border: 1px solid var(--line); background: var(--surface); border-radius: 10px;
+}
+.modebtn b { font-family: var(--font-display); font-weight: 400; font-size: 32px; line-height: 1; grid-column: 1; grid-row: 1; }
+.modebtn .mi { width: 34px; height: 17px; grid-column: 2; grid-row: 1; opacity: 0.9; }
+.modebtn .ml { grid-column: 1 / -1; grid-row: 2; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; }
+.modebtn .mv { grid-column: 1 / -1; grid-row: 3; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+#mode-on[aria-pressed="true"] { background: var(--red); border-color: var(--red); color: var(--on-red); }
+#mode-on[aria-pressed="true"] .mv { color: var(--on-red); opacity: 0.85; }
+#mode-off[aria-pressed="true"] { background: var(--raise); border-color: var(--gold); color: var(--gold); }
+#mode-off[aria-pressed="true"] .mv { color: var(--gold); opacity: 0.85; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
 
 .kcal { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-.kcal .num { font-size: 56px; line-height: 1; font-variant-numeric: tabular-nums; }
+.kcal .num { font-size: 64px; line-height: 1; font-variant-numeric: tabular-nums; }
 .kcal-of { color: var(--muted); font-size: 16px; font-variant-numeric: tabular-nums; }
-.kcal-left { font-size: 14px; color: var(--muted); margin-top: 4px; }
-.kcal-left.over { color: var(--warn); font-weight: 600; }
-.macros { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+.kcal-left { font-size: 14px; color: var(--muted); margin: 4px 0 8px; }
+.kcal-left.over { color: var(--warn); font-weight: 700; }
+.macros { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
 .macro-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 14px; }
-.macro-head .name { font-weight: 600; }
+.macro-head .name { font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: 13px; }
 .macro-head .val { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
-.macro-head .val b { color: var(--ink); font-weight: 600; }
-.macro-head .val .over { color: var(--warn); font-weight: 600; margin-left: 6px; }
-.bar { height: 8px; background: var(--track); border-radius: 4px; overflow: hidden; margin-top: 5px; }
-.bar > i { display: block; height: 100%; border-radius: 4px; }
+.macro-head .val b { color: var(--ink); font-weight: 700; }
+.macro-head .val .over { color: var(--warn); font-weight: 700; margin-left: 6px; }
+.bar { height: 10px; background: var(--track); border-radius: 5px; overflow: hidden; margin-top: 5px; }
+.bar > i { display: block; height: 100%; border-radius: 5px; background-image: var(--heat); background-repeat: no-repeat; background-position: left center; }
+.bar > i.hot { box-shadow: 0 0 10px rgba(240, 38, 43, 0.8); }
 
-form { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+form { display: flex; flex-direction: column; gap: 12px; }
 .row { display: grid; gap: 12px; }
 .row.two { grid-template-columns: 1fr 1fr; }
 .row.three { grid-template-columns: repeat(3, 1fr); }
 label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); font-weight: 500; min-width: 0; }
 input, select {
-  width: 100%; min-width: 0; height: 44px; padding: 0 12px; border-radius: 10px;
-  border: 1px solid var(--line); background: var(--bg); font-size: 16px;
+  width: 100%; min-width: 0; height: 44px; padding: 0 12px; border-radius: 8px;
+  border: 1px solid var(--line); background: var(--raise); font-size: 16px; color: var(--ink);
 }
-.lab-carbs { color: var(--carbs); }
-.lab-protein { color: var(--protein); }
-.lab-fat { color: var(--fat); }
+input::placeholder { color: #6E6E76; }
+.lab-carbs { color: var(--carbs); font-weight: 600; }
+.lab-protein { color: var(--protein); font-weight: 600; }
+.lab-fat { color: var(--fat); font-weight: 600; }
 .form-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .preview { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.primary {
-  height: 44px; padding: 0 20px; border: 0; border-radius: 10px;
-  background: var(--accent); color: var(--on-accent); font-weight: 600;
-}
+.primary { height: 44px; padding: 0 20px; border: 0; border-radius: 8px; background: var(--red); color: var(--on-red); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
 .primary:disabled { opacity: 0.6; cursor: default; }
+.secondary { height: 44px; padding: 0 18px; border: 1px solid var(--line); background: var(--raise); border-radius: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; font-size: 14px; }
 .msg { font-size: 14px; color: var(--warn); min-height: 1.2em; margin: 0; }
+.sub { font-family: var(--font-display); font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 18px 0 10px; }
 
-.recent { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.chip {
-  border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 6px 12px;
-  font-size: 14px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+.searchform { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 12px; }
+.searchform input { height: 48px; }
+.searchform .primary { height: 48px; }
+.hintline { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
+.results { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.reshead { font-family: var(--font-display); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin: 10px 0 0; }
+.res { width: 100%; text-align: left; background: var(--raise); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: grid; gap: 2px; }
+.res .rn { font-weight: 700; overflow-wrap: anywhere; }
+.res .rb { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+.res .rs { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.scan-btn {
+  width: 100%; height: 52px; border: 1px solid var(--gold); border-radius: 8px; background: transparent; color: var(--gold);
+  font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 0.06em; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 12px;
 }
+.scan-btn svg { width: 24px; height: 24px; flex: none; }
+.code-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; margin-top: 10px; }
+.code-row .secondary { height: 44px; }
+
+.product { margin-top: 14px; padding: 14px; border: 1px solid var(--red); border-radius: 10px; background: var(--raise); display: flex; flex-direction: column; gap: 10px; }
+.product .pname { font-weight: 700; font-size: 18px; overflow-wrap: anywhere; }
+.product .pbrand { font-size: 14px; color: var(--muted); overflow-wrap: anywhere; }
+.product .p100 { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.product .allerg { font-size: 13px; }
+.product .allerg small { color: var(--muted); display: block; }
+.grams { display: grid; grid-template-columns: 120px 1fr; gap: 12px; align-items: end; }
+.pcalc { font-family: var(--font-display); font-size: 26px; font-variant-numeric: tabular-nums; }
+.pcalc span { display: block; font-family: var(--font-body); font-size: 13px; color: var(--muted); }
+.pnote { font-size: 13px; color: var(--muted); margin: 0; }
+.pactions { display: flex; flex-wrap: wrap; gap: 8px; }
+.pactions > button { flex: 1 1 140px; height: auto; min-height: 44px; padding-block: 8px; }
+
+.recent { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--line); background: var(--raise); border-radius: 999px; padding: 6px 12px; font-size: 14px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .meals { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; }
 .meal { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding: 12px 0; border-top: 1px solid var(--line); }
 .meal:first-child { border-top: 0; padding-top: 0; }
-.meal .title { min-width: 0; overflow-wrap: anywhere; font-weight: 500; }
-.meal .slot { display: block; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-.meal .kc { font-family: var(--font-display); font-weight: 700; font-size: 22px; text-align: right; font-variant-numeric: tabular-nums; }
-.meal .mac { grid-column: 1; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.meal .title { min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
+.meal .slot { display: block; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); font-weight: 700; }
+.meal .kc { font-family: var(--font-display); font-size: 24px; text-align: right; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.meal .mac { grid-column: 1 / -1; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .meal .mac span + span { margin-left: 10px; }
-.meal .del { grid-column: 2; grid-row: 2; justify-self: end; border: 0; background: none; color: var(--muted); font-size: 13px; padding: 2px 0; text-decoration: underline; }
-.meal .del.armed { color: var(--warn); font-weight: 600; }
+.meal .tools { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 2px; }
+.meal .wg { display: flex; flex-direction: row; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+.meal .wg input { width: 84px; height: 38px; text-align: right; }
+.meal .del { border: 0; background: none; color: var(--muted); font-size: 13px; padding: 6px 0; text-decoration: underline; }
+.meal .del.armed { color: var(--warn); font-weight: 700; }
 .empty { margin: 12px 0 0; color: var(--muted); }
 
 .week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 12px; }
 .day { border: 0; background: none; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
-.day .col { position: relative; width: 100%; max-width: 36px; height: 72px; background: var(--track); border-radius: 6px; overflow: hidden; display: flex; align-items: flex-end; }
-.day .col i { display: block; width: 100%; background: var(--muted); opacity: 0.55; }
-.day.sel .col i { background: var(--accent); opacity: 1; }
-.day .dl { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; }
-.day.sel .dl { color: var(--ink); }
+.day .col { width: 100%; max-width: 36px; height: 72px; background: var(--track); border-radius: 6px; overflow: hidden; display: flex; align-items: flex-end; border: 1px solid transparent; }
+.day .col i { display: block; width: 100%; background-image: var(--heat-v); background-repeat: no-repeat; background-position: bottom; }
+.day.sel .col { border-color: var(--gold); }
+.day .dl { font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+.day.sel .dl { color: var(--gold); }
 .day .dk { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
 
-details summary { cursor: pointer; font-family: var(--font-display); font-weight: 600; font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-details .row { margin-top: 12px; }
+details summary { cursor: pointer; font-family: var(--font-display); font-size: 17px; letter-spacing: 0.06em; text-transform: uppercase; }
 details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-variant-numeric: tabular-nums; }
-.secondary { height: 44px; padding: 0 20px; border: 1px solid var(--line); background: var(--bg); border-radius: 10px; font-weight: 600; margin-top: 12px; }
+details .secondary { margin-top: 12px; }
+.tgroup { font-size: 17px; letter-spacing: 0.05em; text-transform: uppercase; margin: 16px 0 10px; }
 
-.mode { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.modebtn {
-  display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: 2px 10px; text-align: left;
-  padding: 10px 14px; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; min-width: 0;
-}
-.modebtn b { font-family: var(--font-display); font-size: 28px; line-height: 1; grid-row: 1 / span 2; align-self: center; }
-.modebtn .ml { font-weight: 600; font-size: 15px; }
-.modebtn .mv { grid-column: 2; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.modebtn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-.modebtn[aria-pressed="true"] .mv { color: var(--on-accent); opacity: 0.85; }
-.tgroup { font-family: var(--font-display); font-weight: 600; font-size: 17px; margin: 16px 0 0; }
 .install { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 14px; padding: 12px 16px; }
 .install p { margin: 0; min-width: 0; flex: 1 1 200px; }
 .install .primary { height: 40px; }
 
-.scan-row { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 12px; }
-.scan-btn {
-  height: 52px; border: 0; border-radius: 12px; background: var(--accent); color: var(--on-accent);
-  font-weight: 600; font-size: 17px; display: flex; align-items: center; justify-content: center; gap: 10px;
-}
-.scan-btn svg { width: 24px; height: 24px; flex: none; }
-.code-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
-.code-row .secondary { margin-top: 0; }
-
-.product { margin-top: 14px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); display: flex; flex-direction: column; gap: 10px; }
-.product[hidden] { display: none; }
-.product .pname { font-weight: 600; font-size: 17px; overflow-wrap: anywhere; }
-.product .pbrand { font-size: 14px; color: var(--muted); overflow-wrap: anywhere; }
-.product .p100 { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.product .allerg { font-size: 13px; color: var(--ink); }
-.product .allerg small { color: var(--muted); display: block; }
-.product .pcalc { font-family: var(--font-display); font-weight: 700; font-size: 22px; font-variant-numeric: tabular-nums; }
-.product .pcalc span { font-family: var(--font-body); font-weight: 500; font-size: 14px; color: var(--muted); margin-left: 8px; }
-.product .pnote { font-size: 13px; color: var(--muted); margin: 0; }
-.product .pactions { display: flex; flex-wrap: wrap; gap: 8px; }
-.product .pactions .secondary, .product .pactions .primary { margin-top: 0; flex: 1 1 140px; }
-.grams { display: grid; grid-template-columns: 110px 1fr; gap: 10px; align-items: end; }
-
 .scanner { position: fixed; inset: 0; z-index: 50; background: #000; display: flex; flex-direction: column; color: #fff; }
-.scanner[hidden] { display: none; }
 .scanner video { flex: 1; width: 100%; min-height: 0; object-fit: cover; background: #000; }
-.scanner .frame {
-  position: absolute; left: 50%; top: 42%; width: min(78vw, 360px); height: min(36vw, 170px);
-  transform: translate(-50%, -50%); border: 2px solid rgba(255, 255, 255, 0.9); border-radius: 14px;
-  box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.45); pointer-events: none;
-}
+.scanner .frame { position: absolute; left: 50%; top: 42%; width: min(78vw, 360px); height: min(36vw, 170px); transform: translate(-50%, -50%); border: 2px solid var(--gold); border-radius: 12px; box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.5); pointer-events: none; }
 .scanner .bar-top, .scanner .bar-bottom { position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px max(16px, env(safe-area-inset-left, 0px)); }
 .scanner .bar-top { top: env(safe-area-inset-top, 0px); }
 .scanner .bar-bottom { bottom: env(safe-area-inset-bottom, 0px); padding-bottom: 20px; justify-content: center; text-align: center; }
-.scanner .smsg { font-size: 15px; background: rgba(0, 0, 0, 0.55); padding: 8px 14px; border-radius: 10px; max-width: 100%; }
-.scanner .close { height: 44px; padding: 0 18px; border: 1px solid rgba(255, 255, 255, 0.7); background: rgba(0, 0, 0, 0.55); color: #fff; border-radius: 10px; font-weight: 600; }
+.scanner .smsg { font-size: 15px; background: rgba(0, 0, 0, 0.6); padding: 8px 14px; border-radius: 8px; max-width: 100%; }
+.scanner .close { height: 44px; padding: 0 18px; border: 1px solid rgba(255, 255, 255, 0.7); background: rgba(0, 0, 0, 0.6); color: #fff; border-radius: 8px; font-weight: 700; }
 
 @media (max-width: 380px) {
   .row.three { grid-template-columns: 1fr 1fr; }
-  .kcal .num { font-size: 48px; }
+  .kcal .num { font-size: 54px; }
+  .hero h1 { font-size: 32px; }
+  .hero h1 .fit { font-size: 27px; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .bar > i { transition: width 0.25s ease; }
-  .day .col i { transition: height 0.25s ease; }
+  .bar > i { transition: width 0.3s ease, background-size 0.3s ease; }
+  .day .col i { transition: height 0.3s ease, background-size 0.3s ease; }
 }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-barbell" viewBox="0 0 64 24">
+    <rect x="8" y="11" width="48" height="2"/>
+    <rect x="3" y="10" width="7" height="4" rx="1"/><rect x="54" y="10" width="7" height="4" rx="1"/>
+    <rect x="10" y="2" width="6" height="20" rx="1.5"/><rect x="48" y="2" width="6" height="20" rx="1.5"/>
+    <rect x="17" y="5" width="4" height="14" rx="1"/><rect x="43" y="5" width="4" height="14" rx="1"/>
+    <rect x="22" y="10" width="2" height="4"/><rect x="40" y="10" width="2" height="4"/>
+  </symbol>
+  <symbol id="i-dumbbell" viewBox="0 0 48 24">
+    <rect x="14" y="10" width="20" height="4" rx="1"/>
+    <rect x="10" y="6" width="4" height="12" rx="1"/><rect x="34" y="6" width="4" height="12" rx="1"/>
+    <rect x="4" y="3" width="6" height="18" rx="2"/><rect x="38" y="3" width="6" height="18" rx="2"/>
+  </symbol>
+</svg>
+
 <main class="wrap">
-  <header class="top">
-    <h1>Bellottrack food fit</h1>
-    <div class="sync" id="sync" role="status"></div>
+  <header class="hero">
+    <div class="hero-text">
+      <svg class="ic logo" aria-hidden="true" focusable="false"><use href="#i-barbell"/></svg>
+      <h1>Bellottrack <span class="fit">food fit</span></h1>
+      <div class="sync" id="sync" role="status"></div>
+    </div>
   </header>
 
   <section class="card install" id="install" hidden>
@@ -262,10 +269,14 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
 
   <div class="mode" role="group" aria-label="Tipo di giornata">
     <button class="modebtn" id="mode-off" type="button" aria-pressed="true">
-      <b>OFF</b><span class="ml">Riposo</span><span class="mv" id="mode-off-vals"></span>
+      <b>OFF</b>
+      <svg class="ic mi" aria-hidden="true" focusable="false"><use href="#i-dumbbell"/></svg>
+      <span class="ml">Riposo</span><span class="mv" id="mode-off-vals"></span>
     </button>
     <button class="modebtn" id="mode-on" type="button" aria-pressed="false">
-      <b>ON</b><span class="ml">Allenamento</span><span class="mv" id="mode-on-vals"></span>
+      <b>ON</b>
+      <svg class="ic mi" aria-hidden="true" focusable="false"><use href="#i-barbell"/></svg>
+      <span class="ml">Allenamento</span><span class="mv" id="mode-on-vals"></span>
     </button>
   </div>
 
@@ -274,24 +285,31 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
       <span class="num" id="kcal-num">0</span>
       <span class="kcal-of" id="kcal-of"></span>
     </div>
+    <div class="bar" aria-hidden="true"><i id="kcal-fill"></i></div>
     <div class="kcal-left" id="kcal-left"></div>
     <div class="macros" id="macros"></div>
   </section>
 
   <section class="card" aria-labelledby="add-h">
-    <h2 id="add-h">Aggiungi pasto</h2>
+    <h2 id="add-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-dumbbell"/></svg>Aggiungi alimento</h2>
 
-    <div class="scan-row">
-      <button class="scan-btn" id="scan-btn" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M8 8v8M11 8v8M14 8v5M17 8v8"/></svg>
-        Scansiona codice a barre
-      </button>
-      <div class="code-row">
-        <label for="f-code" style="grid-column:1/-1">Oppure scrivi il codice a barre
-          <input id="f-code" type="text" inputmode="numeric" placeholder="Es. 8001234567890" maxlength="14">
-        </label>
-        <button class="secondary" id="code-go" type="button" style="grid-column:1/-1">Cerca prodotto</button>
-      </div>
+    <form class="searchform" id="search-form" role="search" autocomplete="off">
+      <input id="q" type="search" enterkeyhint="search" placeholder="Cerca alimento, pasto o marca" aria-label="Cerca alimento, pasto o marca" maxlength="80">
+      <button class="primary" type="submit">Cerca</button>
+    </form>
+    <p class="hintline">Prima trovi gli alimenti base, poi premi Cerca per il database mondiale Open Food Facts.</p>
+    <p class="msg" id="search-status" role="status" style="color:var(--muted)"></p>
+    <div id="results"></div>
+
+    <button class="scan-btn" id="scan-btn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M8 8v8M11 8v8M14 8v5M17 8v8"/></svg>
+      Scansiona codice a barre
+    </button>
+    <div class="code-row">
+      <label for="f-code">Oppure scrivi il codice a barre
+        <input id="f-code" type="text" inputmode="numeric" placeholder="Es. 8001234567890" maxlength="14">
+      </label>
+      <button class="secondary" id="code-go" type="button">Cerca</button>
     </div>
 
     <div class="product" id="product" hidden aria-live="polite">
@@ -302,7 +320,7 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
       <div class="p100" id="p-100"></div>
       <div class="allerg" id="p-allerg"></div>
       <div class="grams">
-        <label for="p-grams">Quantità (g)
+        <label for="p-grams">Peso (g)
           <input id="p-grams" type="text" inputmode="decimal" value="100">
         </label>
         <div class="pcalc" id="p-calc"></div>
@@ -310,15 +328,16 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
       <p class="pnote" id="p-note"></p>
       <div class="pactions">
         <button class="primary" id="p-add" type="button">Aggiungi al diario</button>
-        <button class="secondary" id="p-fill" type="button">Modifica nel modulo</button>
+        <button class="secondary" id="p-fill" type="button">Modifica a mano</button>
       </div>
     </div>
     <p class="msg" id="scan-msg" role="status" style="margin-top:8px"></p>
 
+    <h3 class="sub">Inserisci a mano</h3>
     <form id="meal-form" autocomplete="off" novalidate>
       <div class="row two">
         <label for="f-name">Alimento
-          <input id="f-name" type="text" placeholder="Es. riso basmati 100 g, pollo 200 g" maxlength="120">
+          <input id="f-name" type="text" placeholder="Es. riso basmati" maxlength="120">
         </label>
         <label for="f-slot">Pasto
           <select id="f-slot">
@@ -328,6 +347,17 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
             <option value="post-allenamento">Post-allenamento</option>
             <option value="pranzo">Pranzo</option>
             <option value="cena">Cena</option>
+          </select>
+        </label>
+      </div>
+      <div class="row two">
+        <label for="f-grams">Peso (g)
+          <input id="f-grams" type="text" inputmode="decimal" placeholder="Es. 150">
+        </label>
+        <label for="f-basis">I valori sono per
+          <select id="f-basis">
+            <option value="per100">100 g di alimento</option>
+            <option value="total">tutta la porzione</option>
           </select>
         </label>
       </div>
@@ -351,20 +381,21 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
       </div>
       <p class="msg" id="msg" role="alert"></p>
     </form>
+
     <div id="recent-wrap" hidden>
-      <h2 style="margin-top:4px">Ripeti un pasto recente</h2>
+      <h3 class="sub">Ripeti un alimento recente</h3>
       <div class="recent" id="recent"></div>
     </div>
   </section>
 
   <section class="card" aria-labelledby="list-h">
-    <h2 id="list-h">Pasti del giorno</h2>
+    <h2 id="list-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-barbell"/></svg>Pasti del giorno</h2>
     <ul class="meals" id="meals"></ul>
-    <p class="empty" id="empty">Nessun pasto registrato per questo giorno. Aggiungi il primo dal modulo qui sopra.</p>
+    <p class="empty" id="empty">Nessun alimento registrato per questo giorno. Aggiungi il primo dal modulo qui sopra.</p>
   </section>
 
   <section class="card" aria-labelledby="week-h">
-    <h2 id="week-h">Ultimi 7 giorni</h2>
+    <h2 id="week-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-dumbbell"/></svg>Ultimi 7 giorni</h2>
     <div class="week" id="week"></div>
   </section>
 
@@ -393,8 +424,8 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
   <section class="card">
     <details>
       <summary>Backup dei dati</summary>
-      <p class="hint">I pasti sono salvati solo su questo telefono. Esporta un backup ogni tanto, e importalo se cambi telefono o cancelli i dati del browser.</p>
-      <div class="pactions" style="display:flex;gap:8px;flex-wrap:wrap">
+      <p class="hint">I dati sono salvati solo su questo telefono. Esporta un backup ogni tanto, e importalo se cambi telefono o cancelli i dati del browser.</p>
+      <div class="pactions" style="margin-top:12px">
         <button class="secondary" id="bk-export" type="button">Esporta backup</button>
         <button class="secondary" id="bk-import" type="button">Importa backup</button>
       </div>
@@ -413,17 +444,73 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
 
 <script>
 (function () {
+  'use strict';
   var DEFAULTS = { on: { carbs: 370, protein: 180, fat: 45 }, off: { carbs: 260, protein: 180, fat: 45 } };
   var MACROS = [
-    { key: 'carbs', label: 'Carboidrati', color: 'var(--carbs)' },
-    { key: 'protein', label: 'Proteine', color: 'var(--protein)' },
-    { key: 'fat', label: 'Grassi', color: 'var(--fat)' }
+    { key: 'carbs', label: 'Carboidrati' },
+    { key: 'protein', label: 'Proteine' },
+    { key: 'fat', label: 'Grassi' }
   ];
   var DAY_LETTERS = ['D', 'L', 'M', 'M', 'G', 'V', 'S'];
+  var ALLERGENS = {
+    'gluten': 'glutine', 'milk': 'latte', 'eggs': 'uova', 'soybeans': 'soia', 'nuts': 'frutta a guscio',
+    'peanuts': 'arachidi', 'fish': 'pesce', 'crustaceans': 'crostacei', 'molluscs': 'molluschi',
+    'celery': 'sedano', 'mustard': 'senape', 'sesame-seeds': 'sesamo',
+    'sulphur-dioxide-and-sulphites': 'solfiti', 'lupin': 'lupini'
+  };
+  /* Alimenti base: valori medi indicativi per 100 g (n nome, c carbo, p proteine, f grassi, s porzione tipica in g, a allergeni). */
+  var BASE = [
+    { n: 'Petto di pollo (crudo)', c: 0, p: 23, f: 2 },
+    { n: 'Petto di tacchino (crudo)', c: 0, p: 24, f: 1 },
+    { n: 'Manzo magro (crudo)', c: 0, p: 21, f: 4 },
+    { n: 'Bresaola', c: 0, p: 32, f: 2 },
+    { n: 'Prosciutto crudo', c: 0, p: 26, f: 18 },
+    { n: 'Uovo intero', c: 0.7, p: 12.5, f: 9.5, s: 50, a: ['eggs'] },
+    { n: 'Albume d’uovo', c: 0.7, p: 11, f: 0.2, a: ['eggs'] },
+    { n: 'Tonno al naturale (sgocciolato)', c: 0, p: 25, f: 1, a: ['fish'] },
+    { n: 'Salmone (crudo)', c: 0, p: 20, f: 13, a: ['fish'] },
+    { n: 'Merluzzo o nasello (crudo)', c: 0, p: 17, f: 0.5, a: ['fish'] },
+    { n: 'Riso (crudo)', c: 80, p: 7, f: 0.5 },
+    { n: 'Riso (cotto)', c: 28, p: 2.5, f: 0.3 },
+    { n: 'Pasta di semola (cruda)', c: 72, p: 12, f: 1.5, a: ['gluten'] },
+    { n: 'Pasta di semola (cotta)', c: 31, p: 5.5, f: 1, a: ['gluten'] },
+    { n: 'Pane comune', c: 58, p: 8.5, f: 0.5, a: ['gluten'] },
+    { n: 'Fiocchi d’avena', c: 60, p: 13, f: 7, a: ['gluten'] },
+    { n: 'Patate (crude)', c: 17, p: 2, f: 0.1 },
+    { n: 'Patate dolci (crude)', c: 20, p: 1.6, f: 0.1 },
+    { n: 'Quinoa (cruda)', c: 64, p: 14, f: 6 },
+    { n: 'Cous cous (crudo)', c: 72, p: 13, f: 1.5, a: ['gluten'] },
+    { n: 'Gallette di riso', c: 80, p: 8, f: 3 },
+    { n: 'Lenticchie (cotte)', c: 16, p: 9, f: 0.4 },
+    { n: 'Ceci (cotti)', c: 20, p: 8, f: 2.5 },
+    { n: 'Fagioli (cotti)', c: 17, p: 8, f: 0.6 },
+    { n: 'Banana', c: 21, p: 1, f: 0.2, s: 120 },
+    { n: 'Mela', c: 12, p: 0.3, f: 0.2, s: 150 },
+    { n: 'Arancia', c: 8, p: 0.7, f: 0.2, s: 150 },
+    { n: 'Olio extravergine d’oliva', c: 0, p: 0, f: 100, s: 10 },
+    { n: 'Mandorle', c: 9, p: 21, f: 50, a: ['nuts'] },
+    { n: 'Noci', c: 7, p: 15, f: 65, a: ['nuts'] },
+    { n: 'Burro di arachidi', c: 18, p: 25, f: 50, a: ['peanuts'] },
+    { n: 'Parmigiano Reggiano', c: 0, p: 33, f: 28, a: ['milk'] },
+    { n: 'Yogurt greco 0%', c: 4, p: 10, f: 0.2, s: 150, a: ['milk'] },
+    { n: 'Latte parzialmente scremato', c: 5, p: 3.4, f: 1.6, a: ['milk'] },
+    { n: 'Fiocchi di latte', c: 3, p: 11, f: 4, a: ['milk'] },
+    { n: 'Ricotta vaccina', c: 3.5, p: 8.8, f: 8, a: ['milk'] },
+    { n: 'Mozzarella', c: 1, p: 18, f: 17, a: ['milk'] },
+    { n: 'Zucchero', c: 100, p: 0, f: 0 },
+    { n: 'Miele', c: 80, p: 0.4, f: 0 },
+    { n: 'Broccoli', c: 3, p: 3, f: 0.4 },
+    { n: 'Spinaci', c: 1.5, p: 3, f: 0.7 },
+    { n: 'Zucchine', c: 2.5, p: 1.3, f: 0.1 },
+    { n: 'Insalata', c: 2, p: 1.5, f: 0.2 },
+    { n: 'Pomodori', c: 3, p: 1, f: 0.2 },
+    { n: 'Carote', c: 7, p: 1, f: 0.2 }
+  ];
+
   var state = { meals: [], presets: JSON.parse(JSON.stringify(DEFAULTS)), modes: {}, date: todayStr() };
   var store = null;
+  var product = null;
   var loaded = false;
-  var syncTimer = null;
 
   function $(id) { return document.getElementById(id); }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
@@ -438,13 +525,17 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
     var x = parseFloat(String(v == null ? '' : v).replace(',', '.'));
     return isFinite(x) && x > 0 ? x : 0;
   }
+  function round1(n) { return Math.round(n * 10) / 10; }
+  function round2(n) { return Math.round(n * 100) / 100; }
+  function fmt1(n) { return round1(n).toLocaleString('it-IT'); }
+  function fmtN(v) { return v === null || v === undefined ? '?' : fmt1(v); }
   function kcalFromMacros(c, p, f) { return Math.round(4 * c + 4 * p + 9 * f); }
   function kcalOf(m) { return m.kcal > 0 ? Math.round(m.kcal) : kcalFromMacros(m.carbs || 0, m.protein || 0, m.fat || 0); }
   function modeOf(date) { return state.modes[date] === 'on' ? 'on' : 'off'; }
   function targetsFor(date) { return state.presets[modeOf(date)]; }
   function targetKcal(date) { var t = targetsFor(date || state.date); return kcalFromMacros(t.carbs, t.protein, t.fat); }
-  function round1(n) { return Math.round(n * 10) / 10; }
-  function fmt1(n) { return round1(n).toLocaleString('it-IT'); }
+  function newId() { return 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
 
   function dayMeals(date) {
     return state.meals.filter(function (m) { return m.date === date; })
@@ -452,13 +543,19 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
   }
   function totalsOf(list) {
     var t = { kcal: 0, carbs: 0, protein: 0, fat: 0 };
-    list.forEach(function (m) {
-      t.kcal += kcalOf(m); t.carbs += m.carbs || 0; t.protein += m.protein || 0; t.fat += m.fat || 0;
-    });
+    list.forEach(function (m) { t.kcal += kcalOf(m); t.carbs += m.carbs || 0; t.protein += m.protein || 0; t.fat += m.fat || 0; });
     return t;
   }
 
-  /* ---------- Rendering ---------- */
+  /* Barra che va dal freddo (inizio) al caldo (fine): il gradiente copre sempre tutta la barra, il riempimento ne mostra la parte raggiunta. */
+  function setHeat(el, f) {
+    var w = Math.max(0, Math.min(1, f));
+    el.style.width = (w * 100) + '%';
+    el.style.backgroundSize = (w > 0 ? 100 / w : 100) + '% 100%';
+    el.classList.toggle('hot', f > 1);
+  }
+
+  /* ---------- Disegno della pagina ---------- */
   function render() {
     var isToday = state.date === todayStr();
     $('date-label').textContent = isToday ? 'Oggi, ' + fmtLong(state.date) : fmtLong(state.date);
@@ -467,9 +564,11 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
     var list = dayMeals(state.date);
     var t = totalsOf(list);
     var tk = targetKcal();
+    var tg = targetsFor(state.date);
 
     $('kcal-num').textContent = nf(t.kcal);
     $('kcal-of').textContent = '/ ' + nf(tk) + ' kcal';
+    setHeat($('kcal-fill'), tk > 0 ? t.kcal / tk : 0);
     var left = tk - t.kcal;
     var leftEl = $('kcal-left');
     if (left >= 0) { leftEl.textContent = 'Ti restano ' + nf(left) + ' kcal'; leftEl.className = 'kcal-left'; }
@@ -478,7 +577,7 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
     var mc = $('macros');
     mc.textContent = '';
     MACROS.forEach(function (m) {
-      var val = t[m.key], target = targetsFor(state.date)[m.key];
+      var val = t[m.key], target = tg[m.key];
       var wrap = document.createElement('div');
       var head = document.createElement('div'); head.className = 'macro-head';
       var name = document.createElement('span'); name.className = 'name'; name.textContent = m.label;
@@ -493,8 +592,7 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
       head.appendChild(name); head.appendChild(v);
       var bar = document.createElement('div'); bar.className = 'bar';
       var fill = document.createElement('i');
-      fill.style.background = m.color;
-      fill.style.width = (target > 0 ? Math.min(100, (val / target) * 100) : 0) + '%';
+      setHeat(fill, target > 0 ? val / target : 0);
       bar.appendChild(fill);
       wrap.appendChild(head); wrap.appendChild(bar);
       mc.appendChild(wrap);
@@ -511,8 +609,7 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
   function renderMode() {
     var cur = modeOf(state.date);
     ['on', 'off'].forEach(function (m) {
-      var btn = $('mode-' + m);
-      btn.setAttribute('aria-pressed', cur === m ? 'true' : 'false');
+      $('mode-' + m).setAttribute('aria-pressed', cur === m ? 'true' : 'false');
       var t = state.presets[m];
       $('mode-' + m + '-vals').textContent = fmt1(t.carbs) + ' C · ' + fmt1(t.protein) + ' P · ' + fmt1(t.fat) + ' G';
     });
@@ -524,6 +621,34 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
     store.saveSettings({ presets: state.presets, modes: modes }).catch(function () {
       $('scan-msg').textContent = 'Non sono riuscito a salvare la scelta ON/OFF.';
     });
+  }
+
+  var armTimers = new WeakMap();
+  function onDelete(btn, m) {
+    if (!btn.classList.contains('armed')) {
+      btn.classList.add('armed');
+      btn.textContent = 'Conferma eliminazione';
+      armTimers.set(btn, setTimeout(function () { btn.classList.remove('armed'); btn.textContent = 'Elimina'; }, 3000));
+      return;
+    }
+    clearTimeout(armTimers.get(btn));
+    btn.disabled = true;
+    store.remove(m.id).catch(function () {
+      btn.disabled = false; btn.classList.remove('armed'); btn.textContent = 'Elimina';
+      $('msg').textContent = 'Non sono riuscito a eliminare l’alimento. Riprova.';
+    });
+  }
+
+  /* Cambia il peso di un alimento e ricalcola calorie e macro del totale. */
+  function onWeightChange(m, input) {
+    var g = num(input.value);
+    if (!(g > 0) || !m.per100) { input.value = String(m.grams || '').replace('.', ','); return; }
+    var f = g / 100, p = m.per100;
+    store.update(m.id, {
+      grams: round1(g),
+      carbs: round1(p.carbs * f), protein: round1(p.protein * f), fat: round1(p.fat * f),
+      kcal: Math.round((p.kcal > 0 ? p.kcal : kcalFromMacros(p.carbs, p.protein, p.fat)) * f)
+    }).catch(function () { $('msg').textContent = 'Non sono riuscito a cambiare il peso. Riprova.'; });
   }
 
   function renderMeals(list) {
@@ -538,16 +663,29 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
       title.appendChild(document.createTextNode(m.name || ''));
       var kc = document.createElement('div'); kc.className = 'kc'; kc.textContent = nf(kcalOf(m)) + ' kcal';
       var mac = document.createElement('div'); mac.className = 'mac';
-      [['C', m.carbs, '--carbs'], ['P', m.protein, '--protein'], ['G', m.fat, '--fat']].forEach(function (x) {
-        var s = document.createElement('span');
-        s.textContent = x[0] + ' ' + fmt1(x[1] || 0) + ' g';
-        mac.appendChild(s);
+      [['C', m.carbs], ['P', m.protein], ['G', m.fat]].forEach(function (x) {
+        var s = document.createElement('span'); s.textContent = x[0] + ' ' + fmt1(x[1] || 0) + ' g'; mac.appendChild(s);
       });
+      var tools = document.createElement('div'); tools.className = 'tools';
+      if (m.per100 && m.grams > 0) {
+        var lab = document.createElement('label'); lab.className = 'wg';
+        lab.appendChild(document.createTextNode('Peso'));
+        var inp = document.createElement('input');
+        inp.type = 'text'; inp.inputMode = 'decimal'; inp.value = String(m.grams).replace('.', ',');
+        inp.setAttribute('aria-label', 'Peso in grammi di ' + (m.name || 'alimento'));
+        inp.addEventListener('change', function () { onWeightChange(m, inp); });
+        lab.appendChild(inp);
+        lab.appendChild(document.createTextNode('g'));
+        tools.appendChild(lab);
+      } else {
+        tools.appendChild(document.createElement('span'));
+      }
       var del = document.createElement('button');
       del.type = 'button'; del.className = 'del'; del.textContent = 'Elimina';
-      del.setAttribute('aria-label', 'Elimina ' + (m.name || 'pasto'));
+      del.setAttribute('aria-label', 'Elimina ' + (m.name || 'alimento'));
       del.addEventListener('click', function () { onDelete(del, m); });
-      li.appendChild(title); li.appendChild(kc); li.appendChild(mac); li.appendChild(del);
+      tools.appendChild(del);
+      li.appendChild(title); li.appendChild(kc); li.appendChild(mac); li.appendChild(tools);
       ul.appendChild(li);
     });
   }
@@ -557,7 +695,7 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
     var sorted = state.meals.slice().sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
     for (var i = 0; i < sorted.length && out.length < 6; i++) {
       var m = sorted[i];
-      var k = (m.name || '').toLowerCase() + '|' + m.carbs + '|' + m.protein + '|' + m.fat;
+      var k = (m.name || '').toLowerCase() + '|' + (m.per100 ? JSON.stringify(m.per100) : m.carbs + '|' + m.protein + '|' + m.fat);
       if (!m.name || seen[k]) continue;
       seen[k] = 1; out.push(m);
     }
@@ -567,19 +705,29 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
     out.forEach(function (m) {
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'chip';
-      b.textContent = m.name + ' · ' + nf(kcalOf(m)) + ' kcal';
-      b.addEventListener('click', function () {
-        $('f-name').value = m.name;
-        if (m.slot) $('f-slot').value = m.slot;
-        $('f-carbs').value = m.carbs ? String(m.carbs).replace('.', ',') : '';
-        $('f-protein').value = m.protein ? String(m.protein).replace('.', ',') : '';
-        $('f-fat').value = m.fat ? String(m.fat).replace('.', ',') : '';
-        $('f-kcal').value = m.kcal > 0 ? String(m.kcal) : '';
-        updatePreview();
-        $('add-btn').focus();
-      });
+      b.textContent = m.name + (m.grams ? ' · ' + fmt1(m.grams) + ' g' : '') + ' · ' + nf(kcalOf(m)) + ' kcal';
+      b.addEventListener('click', function () { fillFormFromMeal(m); });
       box.appendChild(b);
     });
+  }
+
+  function fillFormFromMeal(m) {
+    function s(v) { return v ? String(v).replace('.', ',') : ''; }
+    $('f-name').value = m.name;
+    if (m.slot) $('f-slot').value = m.slot;
+    if (m.per100) {
+      $('f-basis').value = 'per100';
+      $('f-grams').value = s(m.grams);
+      $('f-carbs').value = s(m.per100.carbs); $('f-protein').value = s(m.per100.protein); $('f-fat').value = s(m.per100.fat);
+      $('f-kcal').value = m.per100.kcal > 0 ? String(m.per100.kcal).replace('.', ',') : '';
+    } else {
+      $('f-basis').value = 'total';
+      $('f-grams').value = s(m.grams);
+      $('f-carbs').value = s(m.carbs); $('f-protein').value = s(m.protein); $('f-fat').value = s(m.fat);
+      $('f-kcal').value = m.kcal > 0 ? String(m.kcal) : '';
+    }
+    updatePreview();
+    $('add-btn').focus();
   }
 
   function renderWeek() {
@@ -596,7 +744,9 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
       btn.setAttribute('aria-label', fmtLong(d) + ', ' + nf(tot.kcal) + ' kcal');
       var col = document.createElement('div'); col.className = 'col';
       var fill = document.createElement('i');
-      fill.style.height = (tk > 0 ? Math.min(100, (tot.kcal / tk) * 100) : 0) + '%';
+      var w = tk > 0 ? Math.max(0, Math.min(1, tot.kcal / tk)) : 0;
+      fill.style.height = (w * 100) + '%';
+      fill.style.backgroundSize = '100% ' + (w > 0 ? 100 / w : 100) + '%';
       col.appendChild(fill);
       var dl = document.createElement('span'); dl.className = 'dl'; dl.textContent = DAY_LETTERS[toDate(d).getDay()];
       var dk = document.createElement('span'); dk.className = 'dk'; dk.textContent = tot.kcal ? nf(tot.kcal) : '–';
@@ -606,12 +756,75 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
     }
   }
 
-  function updatePreview() {
+  /* ---------- Modulo a mano con peso ---------- */
+  function readForm() {
     var c = num($('f-carbs').value), p = num($('f-protein').value), f = num($('f-fat').value), k = num($('f-kcal').value);
-    var kc = k > 0 ? Math.round(k) : kcalFromMacros(c, p, f);
-    $('preview').textContent = kc > 0 ? '≈ ' + nf(kc) + ' kcal' : '';
+    return { c: c, p: p, f: f, k: k > 0 ? k : kcalFromMacros(c, p, f), anyValue: c > 0 || p > 0 || f > 0 || k > 0,
+      grams: num($('f-grams').value), basis: $('f-basis').value };
+  }
+  /* Calcola i totali del pasto a partire dal peso e dai valori inseriti. Restituisce null se manca il peso con valori per 100 g. */
+  function mealValues(r) {
+    if (r.basis === 'per100') {
+      if (!(r.grams > 0)) return null;
+      var f = r.grams / 100;
+      return {
+        grams: round1(r.grams),
+        per100: { carbs: round2(r.c), protein: round2(r.p), fat: round2(r.f), kcal: Math.round(r.k) },
+        carbs: round1(r.c * f), protein: round1(r.p * f), fat: round1(r.f * f), kcal: Math.round(r.k * f)
+      };
+    }
+    var res = { carbs: round1(r.c), protein: round1(r.p), fat: round1(r.f), kcal: Math.round(r.k) };
+    if (r.grams > 0) {
+      var inv = 100 / r.grams;
+      res.grams = round1(r.grams);
+      res.per100 = { carbs: round2(r.c * inv), protein: round2(r.p * inv), fat: round2(r.f * inv), kcal: Math.round(r.k * inv) };
+    }
+    return res;
+  }
+  function updatePreview() {
+    var r = readForm();
+    var v = mealValues(r);
+    var el = $('preview');
+    if (!r.anyValue) { el.textContent = ''; return; }
+    if (!v) { el.textContent = 'Inserisci il peso per il totale'; return; }
+    el.textContent = '≈ ' + nf(v.kcal) + ' kcal · C ' + fmt1(v.carbs) + ' · P ' + fmt1(v.protein) + ' · G ' + fmt1(v.fat);
   }
 
+  async function onSubmit(e) {
+    e.preventDefault();
+    var msg = $('msg');
+    msg.textContent = '';
+    var name = $('f-name').value.trim();
+    var r = readForm();
+    if (!name) { msg.textContent = 'Scrivi cosa hai mangiato.'; $('f-name').focus(); return; }
+    if (!r.anyValue) { msg.textContent = 'Inserisci almeno un valore tra carbo, proteine, grassi o calorie.'; $('f-carbs').focus(); return; }
+    var v = mealValues(r);
+    if (!v) { msg.textContent = 'Inserisci il peso in grammi, oppure scegli «tutta la porzione».'; $('f-grams').focus(); return; }
+    var meal = Object.assign({ id: newId(), date: state.date, slot: $('f-slot').value, name: name, createdAt: Date.now() }, v);
+    var btn = $('add-btn');
+    btn.disabled = true;
+    try {
+      await store.add(meal);
+      ['f-name', 'f-grams', 'f-carbs', 'f-protein', 'f-fat', 'f-kcal'].forEach(function (id) { $(id).value = ''; });
+      $('f-slot').value = guessSlot();
+      updatePreview();
+      $('f-name').focus();
+    } catch (err) {
+      msg.textContent = 'Non sono riuscito a salvare l’alimento. Riprova.';
+    }
+    btn.disabled = false;
+  }
+
+  function guessSlot() {
+    var h = new Date().getHours();
+    if (h < 10) return 'colazione';
+    if (h < 12) return 'spuntino';
+    if (h < 15) return 'pranzo';
+    if (h < 18) return 'spuntino';
+    return 'cena';
+  }
+
+  /* ---------- Obiettivi ---------- */
   var T_IDS = [['on', 'carbs'], ['on', 'protein'], ['on', 'fat'], ['off', 'carbs'], ['off', 'protein'], ['off', 'fat']];
   function fillTargets() {
     T_IDS.forEach(function (x) { $('t-' + x[0] + '-' + x[1]).value = String(state.presets[x[0]][x[1]]).replace('.', ','); });
@@ -623,8 +836,25 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
       $('t-' + m + '-hint').textContent = 'Obiettivo ' + (m === 'on' ? 'ON' : 'OFF') + ': ' + nf(kcalFromMacros(c, p, f)) + ' kcal';
     });
   }
+  async function onSaveTargets() {
+    var m = $('t-msg');
+    var presets = { on: {}, off: {} };
+    var ok = true;
+    T_IDS.forEach(function (x) {
+      var v = num($('t-' + x[0] + '-' + x[1]).value);
+      if (!(v > 0)) ok = false;
+      presets[x[0]][x[1]] = v;
+    });
+    if (!ok) { m.style.color = 'var(--warn)'; m.textContent = 'Inserisci un valore maggiore di zero per ogni macro.'; return; }
+    try {
+      await store.saveSettings({ presets: presets, modes: state.modes });
+      m.style.color = 'var(--muted)'; m.textContent = 'Obiettivi salvati.';
+    } catch (err) {
+      m.style.color = 'var(--warn)'; m.textContent = 'Non sono riuscito a salvare gli obiettivi.';
+    }
+  }
 
-  /* ---------- Storage ---------- */
+  /* ---------- Salvataggio sul telefono ---------- */
   function localStore() {
     var KEY = 'bellottrack-food-fit-v1';
     function read() {
@@ -638,19 +868,16 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
     function write() { try { localStorage.setItem(KEY, JSON.stringify(mem)); } catch (e) {} }
     var cb = null;
     return {
-      kind: 'local',
-      watch: function (onMeals, onSettings) {
-        cb = { m: onMeals, s: onSettings };
-        onMeals(mem.meals.slice(), false); onSettings(mem.settings);
+      watch: function (onMeals, onSettings) { cb = { m: onMeals, s: onSettings }; onMeals(mem.meals.slice()); onSettings(mem.settings); },
+      add: function (m) { mem.meals.push(m); write(); cb.m(mem.meals.slice()); return Promise.resolve(); },
+      update: function (id, patch) {
+        mem.meals = mem.meals.map(function (x) { return x.id === id ? Object.assign({}, x, patch) : x; });
+        write(); cb.m(mem.meals.slice()); return Promise.resolve();
       },
-      add: function (m) { mem.meals.push(m); write(); cb.m(mem.meals.slice(), false); return Promise.resolve(); },
-      remove: function (id) { mem.meals = mem.meals.filter(function (x) { return x.id !== id; }); write(); cb.m(mem.meals.slice(), false); return Promise.resolve(); },
+      remove: function (id) { mem.meals = mem.meals.filter(function (x) { return x.id !== id; }); write(); cb.m(mem.meals.slice()); return Promise.resolve(); },
       saveSettings: function (st) { mem.settings = st; write(); cb.s(st); return Promise.resolve(); }
     };
   }
-
-  function setSync(text) { $('sync').textContent = text; }
-
   function applySettings(st) {
     var presets = JSON.parse(JSON.stringify(DEFAULTS));
     if (st && st.presets) {
@@ -666,206 +893,36 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
     if (!$('targets-box').open) fillTargets();
     render();
   }
-
-  function onMeals(list, fromCache) {
+  function onMeals(list) {
     state.meals = list;
-    if (!fromCache && !loaded) {
-      loaded = true;
-      clearTimeout(syncTimer);
-      setSync('Salvato su questo telefono');
-    }
+    if (!loaded) { loaded = true; $('sync').textContent = 'Salvato su questo telefono'; }
     render();
   }
 
-  function onStoreError() {
-    clearTimeout(syncTimer);
-    setSync('Non riesco a leggere i dati salvati. Riapri la pagina più tardi.');
-  }
-
-  /* ---------- Actions ---------- */
-  var armTimers = new WeakMap();
-  function onDelete(btn, m) {
-    if (!btn.classList.contains('armed')) {
-      btn.classList.add('armed');
-      btn.textContent = 'Conferma eliminazione';
-      armTimers.set(btn, setTimeout(function () {
-        btn.classList.remove('armed'); btn.textContent = 'Elimina';
-      }, 3000));
-      return;
-    }
-    clearTimeout(armTimers.get(btn));
-    btn.disabled = true;
-    store.remove(m.id).catch(function () {
-      btn.disabled = false; btn.classList.remove('armed'); btn.textContent = 'Elimina';
-      $('msg').textContent = 'Non sono riuscito a eliminare il pasto. Riprova.';
-    });
-  }
-
-  function guessSlot() {
-    var h = new Date().getHours();
-    if (h < 10) return 'colazione';
-    if (h < 12) return 'spuntino';
-    if (h < 15) return 'pranzo';
-    if (h < 18) return 'spuntino';
-    return 'cena';
-  }
-
-  function newId() { return 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-
-  async function onSubmit(e) {
-    e.preventDefault();
-    var msg = $('msg');
-    msg.textContent = '';
-    var name = $('f-name').value.trim();
-    var c = num($('f-carbs').value), p = num($('f-protein').value), f = num($('f-fat').value), k = num($('f-kcal').value);
-    if (!name) { msg.textContent = 'Scrivi cosa hai mangiato.'; $('f-name').focus(); return; }
-    if (!(c > 0 || p > 0 || f > 0 || k > 0)) { msg.textContent = 'Inserisci almeno un valore tra carbo, proteine, grassi o calorie.'; $('f-carbs').focus(); return; }
-    var meal = {
-      id: newId(), date: state.date, slot: $('f-slot').value, name: name,
-      carbs: round1(c), protein: round1(p), fat: round1(f), kcal: Math.round(k), createdAt: Date.now()
+  /* ---------- Prodotti: dati, ricerca e scheda ---------- */
+  function parseProduct(code, pr) {
+    var n = pr.nutriments || {};
+    function g(k) { var v = n[k]; if (v === undefined || v === null || v === '') return null; v = Number(v); return isFinite(v) && v >= 0 ? v : null; }
+    var kcal = g('energy-kcal_100g');
+    if (kcal === null) { var kj = g('energy_100g'); if (kj !== null) kcal = kj / 4.184; }
+    var serving = Number(pr.serving_quantity);
+    var nm = pr.product_name_it || pr.product_name || pr.generic_name || '';
+    return {
+      code: code, hasName: !!String(nm).trim(),
+      name: String(nm).trim() || ('Prodotto ' + code),
+      brand: pr.brands ? String(pr.brands).split(',')[0].trim() : '',
+      quantity: pr.quantity ? String(pr.quantity) : '',
+      kcal: kcal, carbs: g('carbohydrates_100g'), protein: g('proteins_100g'), fat: g('fat_100g'),
+      serving: isFinite(serving) && serving > 0 ? serving : 0,
+      allergens: (pr.allergens_tags || []).map(function (t) { return String(t).replace(/^[a-z]{2}:/, ''); })
     };
-    var btn = $('add-btn');
-    btn.disabled = true;
-    try {
-      await store.add(meal);
-      $('f-name').value = ''; $('f-carbs').value = ''; $('f-protein').value = ''; $('f-fat').value = ''; $('f-kcal').value = '';
-      $('f-slot').value = guessSlot();
-      updatePreview();
-      $('f-name').focus();
-    } catch (err) {
-      msg.textContent = 'Non sono riuscito a salvare il pasto. Controlla la connessione e riprova.';
-    }
-    btn.disabled = false;
   }
-
-  async function onSaveTargets() {
-    var m = $('t-msg');
-    var presets = { on: {}, off: {} };
-    var ok = true;
-    T_IDS.forEach(function (x) {
-      var v = num($('t-' + x[0] + '-' + x[1]).value);
-      if (!(v > 0)) ok = false;
-      presets[x[0]][x[1]] = v;
-    });
-    if (!ok) { m.style.color = 'var(--warn)'; m.textContent = 'Inserisci un valore maggiore di zero per ogni macro.'; return; }
-    try {
-      await store.saveSettings({ presets: presets, modes: state.modes });
-      m.style.color = 'var(--muted)';
-      m.textContent = 'Obiettivi salvati.';
-    } catch (err) {
-      m.style.color = 'var(--warn)';
-      m.textContent = 'Non sono riuscito a salvare gli obiettivi.';
-    }
+  function baseToProduct(b) {
+    return { code: '', generic: true, hasName: true, name: b.n, brand: '', quantity: '', kcal: kcalFromMacros(b.c, b.p, b.f),
+      carbs: b.c, protein: b.p, fat: b.f, serving: b.s || 0, allergens: b.a || [] };
   }
-
-  /* ---------- Scanner e ricerca prodotto ---------- */
-  var ZXING_URL = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
-  var scanState = { stream: null, reader: null, timer: null, active: false, handled: false };
-  var product = null;
-  var SLOT_LABELS = { 'colazione': 'colazione', 'spuntino': 'spuntino', 'pre-allenamento': 'pre-allenamento', 'post-allenamento': 'post-allenamento', 'pranzo': 'pranzo', 'cena': 'cena' };
-  var ALLERGENS = {
-    'gluten': 'glutine', 'milk': 'latte', 'eggs': 'uova', 'soybeans': 'soia', 'nuts': 'frutta a guscio',
-    'peanuts': 'arachidi', 'fish': 'pesce', 'crustaceans': 'crostacei', 'molluscs': 'molluschi',
-    'celery': 'sedano', 'mustard': 'senape', 'sesame-seeds': 'sesamo',
-    'sulphur-dioxide-and-sulphites': 'solfiti', 'lupin': 'lupini'
-  };
-
-  function fmtN(v) { return v === null || v === undefined ? '?' : fmt1(v); }
-
-  function loadScript(src) {
-    return new Promise(function (resolve, reject) {
-      if (window.ZXing) { resolve(); return; }
-      var s = document.createElement('script');
-      s.src = src;
-      s.onload = function () { resolve(); };
-      s.onerror = function () { reject(new Error('load')); };
-      document.head.appendChild(s);
-    });
-  }
-
-  function setScanStatus(t) { $('scan-status').textContent = t; }
-
-  function stopScanner() {
-    scanState.active = false;
-    clearInterval(scanState.timer); scanState.timer = null;
-    try { if (scanState.reader) scanState.reader.reset(); } catch (e) {}
-    scanState.reader = null;
-    if (scanState.stream) { scanState.stream.getTracks().forEach(function (t) { t.stop(); }); scanState.stream = null; }
-    var v = $('scan-video');
-    try { v.pause(); } catch (e) {}
-    v.srcObject = null;
-    $('scanner').hidden = true;
-  }
-
-  function onCode(raw) {
-    if (scanState.handled) return;
-    var code = String(raw || '').replace(/\D/g, '');
-    if (code.length < 8) return;
-    scanState.handled = true;
-    try { if (navigator.vibrate) navigator.vibrate(60); } catch (e) {}
-    stopScanner();
-    $('f-code').value = code;
-    lookup(code);
-  }
-
-  async function openScanner() {
-    $('scan-msg').textContent = '';
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      $('scan-msg').textContent = 'La fotocamera non è disponibile qui. Scrivi il codice a barre a mano.';
-      return;
-    }
-    scanState.handled = false;
-    scanState.active = true;
-    $('scanner').hidden = false;
-    setScanStatus('Avvio della fotocamera…');
-    var video = $('scan-video');
-    try {
-      if ('BarcodeDetector' in window) {
-        var detector = new window.BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'] });
-        scanState.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
-        if (!scanState.active) { stopScanner(); return; }
-        video.srcObject = scanState.stream;
-        await video.play();
-        setScanStatus('Inquadra il codice a barre');
-        var busy = false;
-        scanState.timer = setInterval(async function () {
-          if (busy || !scanState.active) return;
-          busy = true;
-          try {
-            var found = await detector.detect(video);
-            if (found && found.length) onCode(found[0].rawValue);
-          } catch (e) {}
-          busy = false;
-        }, 250);
-      } else {
-        await loadScript(ZXING_URL);
-        if (!scanState.active) return;
-        var Z = window.ZXing;
-        var hints = new Map();
-        hints.set(Z.DecodeHintType.POSSIBLE_FORMATS, [Z.BarcodeFormat.EAN_13, Z.BarcodeFormat.EAN_8, Z.BarcodeFormat.UPC_A, Z.BarcodeFormat.UPC_E]);
-        var reader = new Z.BrowserMultiFormatReader(hints, 250);
-        scanState.reader = reader;
-        await reader.decodeFromConstraints(
-          { video: { facingMode: { ideal: 'environment' } }, audio: false },
-          video,
-          function (result) { if (result) onCode(result.getText()); }
-        );
-        setScanStatus('Inquadra il codice a barre');
-      }
-    } catch (err) {
-      stopScanner();
-      var name = err && err.name;
-      var text;
-      if (name === 'NotAllowedError' || name === 'SecurityError') text = 'Non ho il permesso di usare la fotocamera. Consentilo dalle impostazioni del browser, oppure scrivi il codice a mano.';
-      else if (err && err.message === 'load') text = 'La prima scansione richiede internet per scaricare lo scanner. Oppure scrivi il codice a mano.';
-      else text = 'Non riesco ad avviare lo scanner. Scrivi il codice a barre a mano.';
-      $('scan-msg').textContent = text;
-    }
-  }
-
-  function cacheGet(code) {
-    try { var c = JSON.parse(localStorage.getItem('dp-products') || '{}'); return c[code] || null; } catch (e) { return null; }
-  }
+  function usable(p) { return p.hasName && (p.kcal !== null || p.carbs !== null || p.protein !== null || p.fat !== null); }
+  function cacheGet(code) { try { var c = JSON.parse(localStorage.getItem('dp-products') || '{}'); return c[code] || null; } catch (e) { return null; } }
   function cachePut(code, p) {
     try {
       var c = JSON.parse(localStorage.getItem('dp-products') || '{}');
@@ -876,30 +933,99 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
     } catch (e) {}
   }
 
-  function parseProduct(code, pr) {
-    var n = pr.nutriments || {};
-    function g(k) { var v = n[k]; if (v === undefined || v === null || v === '') return null; v = Number(v); return isFinite(v) && v >= 0 ? v : null; }
-    var kcal = g('energy-kcal_100g');
-    if (kcal === null) { var kj = g('energy_100g'); if (kj !== null) kcal = kj / 4.184; }
-    var serving = Number(pr.serving_quantity);
-    return {
-      code: code,
-      name: pr.product_name_it || pr.product_name || pr.generic_name || ('Prodotto ' + code),
-      brand: pr.brands ? String(pr.brands).split(',')[0].trim() : '',
-      quantity: pr.quantity ? String(pr.quantity) : '',
-      kcal: kcal, carbs: g('carbohydrates_100g'), protein: g('proteins_100g'), fat: g('fat_100g'),
-      serving: isFinite(serving) && serving > 0 ? serving : 0,
-      allergens: (pr.allergens_tags || []).map(function (t) { return String(t).replace(/^[a-z]{2}:/, ''); })
-    };
+  var searchCache = {};
+  var searchAbort = null;
+  var searchSeq = 0;
+
+  function localMatches(q) {
+    var toks = norm(q).split(/\s+/).filter(Boolean);
+    if (!toks.length) return [];
+    return BASE.filter(function (b) { var n = norm(b.n); return toks.every(function (t) { return n.indexOf(t) !== -1; }); }).slice(0, 8).map(baseToProduct);
+  }
+
+  function resItem(p) {
+    var li = document.createElement('li');
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'res';
+    var rn = document.createElement('span'); rn.className = 'rn'; rn.textContent = p.name;
+    b.appendChild(rn);
+    var sub = p.generic ? 'Alimento base' : [p.brand, p.quantity].filter(Boolean).join(' · ');
+    if (sub) { var rb = document.createElement('span'); rb.className = 'rb'; rb.textContent = sub; b.appendChild(rb); }
+    var rs = document.createElement('span'); rs.className = 'rs';
+    rs.textContent = 'Per 100 g: ' + (p.kcal === null ? '?' : nf(p.kcal)) + ' kcal · C ' + fmtN(p.carbs) + ' · P ' + fmtN(p.protein) + ' · G ' + fmtN(p.fat);
+    b.appendChild(rs);
+    b.addEventListener('click', function () {
+      $('results').textContent = ''; $('search-status').textContent = '';
+      showProduct(p);
+    });
+    li.appendChild(b);
+    return li;
+  }
+
+  function renderResults(local, remote) {
+    var box = $('results');
+    box.textContent = '';
+    function section(title, arr) {
+      if (!arr || !arr.length) return;
+      var h = document.createElement('div'); h.className = 'reshead'; h.textContent = title; box.appendChild(h);
+      var ul = document.createElement('ul'); ul.className = 'results';
+      arr.forEach(function (p) { ul.appendChild(resItem(p)); });
+      box.appendChild(ul);
+    }
+    section('Alimenti base', local);
+    section('Database mondiale', remote);
+  }
+
+  async function remoteSearch(q) {
+    if (searchAbort) { try { searchAbort.abort(); } catch (e) {} }
+    searchAbort = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var url = 'https://world.openfoodfacts.org/cgi/search.pl?search_terms=' + encodeURIComponent(q) +
+      '&search_simple=1&action=process&json=1&page_size=24&sort_by=unique_scans_n' +
+      '&fields=code,product_name,product_name_it,generic_name,brands,quantity,serving_quantity,nutriments,allergens_tags';
+    var res = await fetch(url, { headers: { 'Accept': 'application/json' }, signal: searchAbort ? searchAbort.signal : undefined });
+    if (res.status === 429 || res.status === 503) throw new Error('busy');
+    if (!res.ok) throw new Error('http');
+    var data = await res.json();
+    return (data.products || []).map(function (pr) { return parseProduct(String(pr.code || ''), pr); }).filter(usable).slice(0, 20);
+  }
+
+  function onSearchInput() {
+    var q = $('q').value.trim();
+    $('search-status').textContent = '';
+    if (q.length < 2) { $('results').textContent = ''; return; }
+    renderResults(localMatches(q), searchCache[norm(q)] || null);
+  }
+
+  async function onSearchSubmit(e) {
+    e.preventDefault();
+    var q = $('q').value.trim();
+    var st = $('search-status');
+    $('scan-msg').textContent = '';
+    if (q.length < 2) { st.textContent = 'Scrivi almeno 2 lettere.'; return; }
+    var local = localMatches(q);
+    var key = norm(q);
+    if (searchCache[key]) { renderResults(local, searchCache[key]); st.textContent = searchCache[key].length || local.length ? '' : 'Nessun risultato. Inserisci i valori a mano più sotto.'; return; }
+    renderResults(local, null);
+    st.textContent = 'Cerco nel database mondiale…';
+    var seq = ++searchSeq;
+    try {
+      var remote = await remoteSearch(q);
+      if (seq !== searchSeq) return;
+      searchCache[key] = remote;
+      renderResults(local, remote);
+      st.textContent = remote.length || local.length ? '' : 'Nessun risultato. Prova con meno parole oppure inserisci i valori a mano più sotto.';
+    } catch (err) {
+      if (seq !== searchSeq || (err && err.name === 'AbortError')) return;
+      st.textContent = err && err.message === 'busy'
+        ? 'Il database è occupato. Riprova tra un minuto.'
+        : 'Non riesco a contattare il database mondiale. Controlla la connessione.';
+    }
   }
 
   function notFound() {
-    $('product').hidden = true;
-    product = null;
-    $('scan-msg').textContent = 'Prodotto non trovato nel database Open Food Facts. Inserisci i valori a mano nel modulo qui sotto.';
+    $('product').hidden = true; product = null;
+    $('scan-msg').textContent = 'Prodotto non trovato nel database Open Food Facts. Inserisci i valori a mano qui sotto.';
     $('f-name').focus();
   }
-
   async function lookup(code) {
     code = String(code || '').replace(/\D/g, '');
     var msg = $('scan-msg');
@@ -928,13 +1054,13 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
   function showProduct(p) {
     product = p;
     $('p-name').textContent = p.name;
-    $('p-brand').textContent = [p.brand, p.quantity].filter(Boolean).join(' · ');
+    $('p-brand').textContent = p.generic ? 'Alimento base · valori medi indicativi' : [p.brand, p.quantity].filter(Boolean).join(' · ');
     $('p-100').textContent = 'Ogni 100 g: ' + (p.kcal === null ? '?' : nf(p.kcal)) + ' kcal · C ' + fmtN(p.carbs) + ' g · P ' + fmtN(p.protein) + ' g · G ' + fmtN(p.fat) + ' g';
     var al = p.allergens.map(function (a) { return ALLERGENS[a] || a; });
     var box = $('p-allerg');
     box.textContent = al.length ? 'Allergeni indicati: ' + al.join(', ') : 'Nessun allergene indicato nei dati.';
     var small = document.createElement('small');
-    small.textContent = 'I dati sono inseriti dagli utenti: controlla sempre l’etichetta.';
+    small.textContent = p.generic ? 'Sono valori medi: i prodotti reali possono variare.' : 'I dati sono inseriti dagli utenti: controlla sempre l’etichetta.';
     box.appendChild(small);
     $('p-grams').value = String(p.serving || 100).replace('.', ',');
     $('product').hidden = false;
@@ -943,65 +1069,140 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
   }
 
   function productValues() {
-    var gr = num($('p-grams').value);
-    var f = gr / 100;
-    function mul(v) { return v === null ? 0 : v * f; }
+    var g = num($('p-grams').value);
+    var c = product.carbs || 0, pr = product.protein || 0, f = product.fat || 0;
+    var k = product.kcal !== null ? product.kcal : kcalFromMacros(c, pr, f);
+    var x = g / 100;
     return {
-      grams: gr, carbs: round1(mul(product.carbs)), protein: round1(mul(product.protein)), fat: round1(mul(product.fat)),
-      kcal: product.kcal === null ? 0 : Math.round(product.kcal * f)
+      grams: round1(g),
+      per100: { carbs: round2(c), protein: round2(pr), fat: round2(f), kcal: round2(k) },
+      carbs: round1(c * x), protein: round1(pr * x), fat: round1(f * x), kcal: Math.round(k * x)
     };
   }
-
   function updateProductCalc() {
     if (!product) return;
     var v = productValues();
-    var kc = v.kcal > 0 ? v.kcal : kcalFromMacros(v.carbs, v.protein, v.fat);
     var calc = $('p-calc');
-    calc.textContent = nf(kc) + ' kcal';
+    calc.textContent = nf(v.kcal) + ' kcal';
     var sp = document.createElement('span');
     sp.textContent = 'C ' + fmt1(v.carbs) + ' · P ' + fmt1(v.protein) + ' · G ' + fmt1(v.fat);
     calc.appendChild(sp);
     var missing = product.carbs === null || product.protein === null || product.fat === null;
-    var slot = $('f-slot').value;
     $('p-note').textContent = (missing ? 'Alcuni valori mancano nel database: controllali sull’etichetta. ' : '') +
-      'Si aggiunge come ' + (SLOT_LABELS[slot] || slot) + ' al giorno selezionato (' + fmtLong(state.date) + ').';
+      'Si aggiunge come ' + $('f-slot').value + ' al giorno selezionato (' + fmtLong(state.date) + '). Il peso si può cambiare anche dopo, dall’elenco.';
   }
-
   async function addProduct() {
     if (!product) return;
     var v = productValues();
-    if (!(v.grams > 0)) { $('scan-msg').textContent = 'Inserisci la quantità in grammi.'; return; }
-    var name = product.name + (product.brand ? ' (' + product.brand + ')' : '') + ' ' + fmt1(v.grams) + ' g';
-    var meal = {
-      id: newId(), date: state.date, slot: $('f-slot').value, name: name.slice(0, 120),
-      carbs: v.carbs, protein: v.protein, fat: v.fat, kcal: v.kcal, createdAt: Date.now(), barcode: product.code
-    };
+    if (!(v.grams > 0)) { $('scan-msg').textContent = 'Inserisci il peso in grammi.'; return; }
+    var meal = Object.assign({
+      id: newId(), date: state.date, slot: $('f-slot').value,
+      name: (product.name + (product.brand && !product.generic ? ' (' + product.brand + ')' : '')).slice(0, 120),
+      createdAt: Date.now()
+    }, v);
+    if (product.code) meal.barcode = product.code;
     try {
       await store.add(meal);
-      $('scan-msg').textContent = 'Aggiunto: ' + meal.name;
       $('scan-msg').style.color = 'var(--muted)';
-      $('product').hidden = true;
-      $('f-code').value = '';
-      product = null;
+      $('scan-msg').textContent = 'Aggiunto: ' + meal.name + ' · ' + fmt1(v.grams) + ' g';
+      $('product').hidden = true; $('f-code').value = ''; product = null;
     } catch (e) {
       $('scan-msg').style.color = 'var(--warn)';
-      $('scan-msg').textContent = 'Non sono riuscito a salvare il pasto. Riprova.';
+      $('scan-msg').textContent = 'Non sono riuscito a salvare l’alimento. Riprova.';
     }
   }
-
   function fillFromProduct() {
     if (!product) return;
     var v = productValues();
-    var name = product.name + (product.brand ? ' (' + product.brand + ')' : '') + ' ' + fmt1(v.grams) + ' g';
-    $('f-name').value = name.slice(0, 120);
-    $('f-carbs').value = v.carbs ? String(v.carbs).replace('.', ',') : '';
-    $('f-protein').value = v.protein ? String(v.protein).replace('.', ',') : '';
-    $('f-fat').value = v.fat ? String(v.fat).replace('.', ',') : '';
-    $('f-kcal').value = v.kcal > 0 ? String(v.kcal) : '';
+    $('f-name').value = (product.name + (product.brand && !product.generic ? ' (' + product.brand + ')' : '')).slice(0, 120);
+    $('f-basis').value = 'per100';
+    $('f-grams').value = String(v.grams).replace('.', ',');
+    function s(x) { return x ? String(x).replace('.', ',') : ''; }
+    $('f-carbs').value = s(v.per100.carbs); $('f-protein').value = s(v.per100.protein); $('f-fat').value = s(v.per100.fat);
+    $('f-kcal').value = v.per100.kcal > 0 ? String(Math.round(v.per100.kcal)) : '';
     updatePreview();
-    $('product').hidden = true;
-    product = null;
+    $('product').hidden = true; product = null;
     $('f-name').focus();
+  }
+
+  /* ---------- Scanner codice a barre ---------- */
+  var ZXING_URL = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
+  var scanState = { stream: null, reader: null, timer: null, active: false, handled: false };
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      if (window.ZXing) { resolve(); return; }
+      var s = document.createElement('script');
+      s.src = src; s.onload = function () { resolve(); }; s.onerror = function () { reject(new Error('load')); };
+      document.head.appendChild(s);
+    });
+  }
+  function setScanStatus(t) { $('scan-status').textContent = t; }
+  function stopScanner() {
+    scanState.active = false;
+    clearInterval(scanState.timer); scanState.timer = null;
+    try { if (scanState.reader) scanState.reader.reset(); } catch (e) {}
+    scanState.reader = null;
+    if (scanState.stream) { scanState.stream.getTracks().forEach(function (t) { t.stop(); }); scanState.stream = null; }
+    var v = $('scan-video');
+    try { v.pause(); } catch (e) {}
+    v.srcObject = null;
+    $('scanner').hidden = true;
+  }
+  function onCode(raw) {
+    if (scanState.handled) return;
+    var code = String(raw || '').replace(/\D/g, '');
+    if (code.length < 8) return;
+    scanState.handled = true;
+    try { if (navigator.vibrate) navigator.vibrate(60); } catch (e) {}
+    stopScanner();
+    $('f-code').value = code;
+    lookup(code);
+  }
+  async function openScanner() {
+    $('scan-msg').textContent = '';
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      $('scan-msg').textContent = 'La fotocamera non è disponibile qui. Scrivi il codice a barre a mano.';
+      return;
+    }
+    scanState.handled = false; scanState.active = true;
+    $('scanner').hidden = false;
+    setScanStatus('Avvio della fotocamera…');
+    var video = $('scan-video');
+    try {
+      if ('BarcodeDetector' in window) {
+        var detector = new window.BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'] });
+        scanState.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
+        if (!scanState.active) { stopScanner(); return; }
+        video.srcObject = scanState.stream;
+        await video.play();
+        setScanStatus('Inquadra il codice a barre');
+        var busy = false;
+        scanState.timer = setInterval(async function () {
+          if (busy || !scanState.active) return;
+          busy = true;
+          try { var found = await detector.detect(video); if (found && found.length) onCode(found[0].rawValue); } catch (e) {}
+          busy = false;
+        }, 250);
+      } else {
+        await loadScript(ZXING_URL);
+        if (!scanState.active) return;
+        var Z = window.ZXing;
+        var hints = new Map();
+        hints.set(Z.DecodeHintType.POSSIBLE_FORMATS, [Z.BarcodeFormat.EAN_13, Z.BarcodeFormat.EAN_8, Z.BarcodeFormat.UPC_A, Z.BarcodeFormat.UPC_E]);
+        var reader = new Z.BrowserMultiFormatReader(hints, 250);
+        scanState.reader = reader;
+        await reader.decodeFromConstraints({ video: { facingMode: { ideal: 'environment' } }, audio: false }, video,
+          function (result) { if (result) onCode(result.getText()); });
+        setScanStatus('Inquadra il codice a barre');
+      }
+    } catch (err) {
+      stopScanner();
+      var name = err && err.name, text;
+      if (name === 'NotAllowedError' || name === 'SecurityError') text = 'Non ho il permesso di usare la fotocamera. Consentilo dalle impostazioni del browser, oppure scrivi il codice a mano.';
+      else if (err && err.message === 'load') text = 'La prima scansione richiede internet per scaricare lo scanner. Oppure scrivi il codice a mano.';
+      else text = 'Non riesco ad avviare lo scanner. Scrivi il codice a barre a mano.';
+      $('scan-msg').textContent = text;
+    }
   }
 
   /* ---------- Installazione, backup, service worker ---------- */
@@ -1012,30 +1213,21 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
   function setupInstall() {
     if (isStandalone()) return;
     var box = $('install'), btn = $('install-btn');
-    window.addEventListener('beforeinstallprompt', function (e) {
-      e.preventDefault();
-      deferredPrompt = e;
-      box.hidden = false; btn.hidden = false;
-    });
+    window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferredPrompt = e; box.hidden = false; btn.hidden = false; });
     btn.addEventListener('click', async function () {
       if (!deferredPrompt) return;
       deferredPrompt.prompt();
       try { await deferredPrompt.userChoice; } catch (e) {}
-      deferredPrompt = null;
-      box.hidden = true;
+      deferredPrompt = null; box.hidden = true;
     });
     window.addEventListener('appinstalled', function () { box.hidden = true; });
     var ua = navigator.userAgent || '';
     var ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    if (ios) {
-      $('install-text').textContent = 'Per installare l’app: tocca Condividi in Safari, poi «Aggiungi alla schermata Home».';
-      box.hidden = false;
-    }
+    if (ios) { $('install-text').textContent = 'Per installare l’app: tocca Condividi in Safari, poi «Aggiungi alla schermata Home».'; box.hidden = false; }
   }
-
   function setupBackup() {
     $('bk-export').addEventListener('click', function () {
-      var payload = { app: 'bellottrack-food-fit', version: 1, exportedAt: new Date().toISOString(), meals: state.meals, settings: { presets: state.presets, modes: state.modes } };
+      var payload = { app: 'bellottrack-food-fit', version: 2, exportedAt: new Date().toISOString(), meals: state.meals, settings: { presets: state.presets, modes: state.modes } };
       var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
       var a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
@@ -1058,13 +1250,11 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
           state.meals.forEach(function (m) { have[m.id] = 1; });
           var jobs = [], added = 0;
           d.meals.forEach(function (m) {
-            if (m && m.id && typeof m.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(m.date) && !have[m.id]) {
-              jobs.push(store.add(m)); added++;
-            }
+            if (m && m.id && typeof m.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(m.date) && !have[m.id]) { jobs.push(store.add(m)); added++; }
           });
           Promise.all(jobs).then(function () {
             if (d.settings) store.saveSettings(d.settings);
-            $('bk-msg').textContent = 'Importati ' + added + ' pasti.';
+            $('bk-msg').textContent = 'Importati ' + added + ' alimenti.';
           });
         } catch (e) { $('bk-msg').textContent = 'File non valido.'; }
       };
@@ -1072,28 +1262,30 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
       input.value = '';
     });
   }
-
   function registerSW() {
     if ('serviceWorker' in navigator && location.protocol !== 'file:') {
       window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
     }
   }
 
-  /* ---------- Boot ---------- */
+  /* ---------- Avvio ---------- */
   $('f-slot').value = guessSlot();
   $('prev').addEventListener('click', function () { state.date = addDays(state.date, -1); render(); });
   $('next').addEventListener('click', function () { state.date = addDays(state.date, 1); render(); });
   $('today').addEventListener('click', function () { state.date = todayStr(); render(); });
-  $('meal-form').addEventListener('submit', onSubmit);
-  ['f-carbs', 'f-protein', 'f-fat', 'f-kcal'].forEach(function (id) { $(id).addEventListener('input', updatePreview); });
-  T_IDS.forEach(function (x) { $('t-' + x[0] + '-' + x[1]).addEventListener('input', updateTargetHint); });
   $('mode-on').addEventListener('click', function () { setMode('on'); });
   $('mode-off').addEventListener('click', function () { setMode('off'); });
+  $('meal-form').addEventListener('submit', onSubmit);
+  ['f-grams', 'f-carbs', 'f-protein', 'f-fat', 'f-kcal'].forEach(function (id) { $(id).addEventListener('input', updatePreview); });
+  $('f-basis').addEventListener('change', updatePreview);
+  T_IDS.forEach(function (x) { $('t-' + x[0] + '-' + x[1]).addEventListener('input', updateTargetHint); });
   $('t-save').addEventListener('click', onSaveTargets);
+  $('search-form').addEventListener('submit', onSearchSubmit);
+  $('q').addEventListener('input', onSearchInput);
   $('scan-btn').addEventListener('click', openScanner);
   $('scan-close').addEventListener('click', stopScanner);
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && scanState.active) stopScanner(); });
-  $('code-go').addEventListener('click', function () { scanState.handled = true; lookup($('f-code').value); });
+  $('code-go').addEventListener('click', function () { lookup($('f-code').value); });
   $('f-code').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); lookup($('f-code').value); } });
   $('p-grams').addEventListener('input', updateProductCalc);
   $('f-slot').addEventListener('change', updateProductCalc);
@@ -1103,8 +1295,7 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
   render();
 
   store = localStore();
-  store.watch(onMeals, applySettings, onStoreError);
-  setSync('Salvato su questo telefono');
+  store.watch(onMeals, applySettings);
   try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
   setupInstall();
   setupBackup();
@@ -1113,4 +1304,3 @@ details .hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; font-vari
 </script>
 </body>
 </html>
-

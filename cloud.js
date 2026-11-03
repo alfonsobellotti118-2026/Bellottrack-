@@ -20,7 +20,8 @@ export async function initCloud(cfg) {
   const auth = getAuth(app);
   let db;
   try { db = initializeFirestore(app, { localCache: persistentLocalCache() }); } catch (e) { db = getFirestore(app); }
-  let model = null;
+  let ai = null;
+  const models = {};
 
   // Le scritture vanno in coda anche senza rete: non aspettiamo la conferma del server.
   const fire = (p) => { p.catch((e) => console.error(e)); return Promise.resolve(); };
@@ -50,16 +51,25 @@ export async function initCloud(cfg) {
     },
 
     async ask(prompt) {
-      if (!model) {
-        const { getAI, getGenerativeModel, GoogleAIBackend } = await import('https://www.gstatic.com/firebasejs/12.19.0/firebase-ai.js');
-        const ai = getAI(app, { backend: new GoogleAIBackend() });
-        model = getGenerativeModel(ai, {
-          model: cfg.aiModel || 'gemini-2.5-flash',
-          generationConfig: { responseMimeType: 'application/json', maxOutputTokens: 900 }
-        });
+      const { getAI, getGenerativeModel, GoogleAIBackend } = await import('https://www.gstatic.com/firebasejs/12.19.0/firebase-ai.js');
+      if (!ai) ai = getAI(app, { backend: new GoogleAIBackend() });
+      // Se il modello e' sovraccarico, prova il successivo dell'elenco.
+      const names = [cfg.aiModel || 'gemini-3.8-flash'].concat(cfg.aiFallback || ['gemini-3.5-flash', 'gemini-3.5-flash-lite']);
+      let last;
+      for (const name of names) {
+        try {
+          if (!models[name]) {
+            models[name] = getGenerativeModel(ai, { model: name, generationConfig: { responseMimeType: 'application/json', maxOutputTokens: 900 } });
+          }
+          const r = await models[name].generateContent(prompt);
+          return r.response.text();
+        } catch (e) {
+          last = e;
+          const m = String((e && e.message) || e);
+          if (!/\[(500|503|429)\]|high demand|overloaded|unavailable|quota/i.test(m)) throw e;
+        }
       }
-      const r = await model.generateContent(prompt);
-      return r.response.text();
+      throw last;
     },
 
     async deleteAccount(password) {

@@ -784,9 +784,15 @@
       chatLog.push({ role: 'ai', text: wait.textContent });
       (Array.isArray(o.azioni) ? o.azioni.slice(0, 4) : []).forEach(function (a) { var act = normAction(a); if (act) addCard(act); });
     }).catch(function (err) {
-      var c = err && (err.code || err.message) ? String(err.code || err.message) : '';
-      wait.textContent = /quota|429|rate/i.test(c) ? 'Hai raggiunto il limite gratuito dell’AI: riprova tra qualche minuto.' :
-        /network|fetch|offline/i.test(c) ? 'Nessuna connessione: riprova.' : 'L’AI non è riuscita a rispondere. Riprova tra poco.';
+      var raw = err && (err.message || err.code) ? String(err.message || err.code) : '';
+      if (window.console) console.error(err);
+      var msg;
+      if (navigator.onLine === false) msg = 'Nessuna connessione: riprova.';
+      else if (/quota|429|rate.?limit|resource.?exhausted/i.test(raw)) msg = 'Hai raggiunto il limite gratuito dell’AI: riprova tra qualche minuto.';
+      else if (/403|permission|not been used|disabled|not enabled|api.?key|forbidden/i.test(raw)) msg = 'Il servizio AI non risulta ancora abilitato nel progetto Firebase.';
+      else if (/404|not found|model/i.test(raw)) msg = 'Il modello AI indicato non è stato trovato.';
+      else msg = 'L’AI non è riuscita a rispondere.';
+      wait.textContent = msg + (raw ? '\nDettaglio: ' + raw.replace(/\s+/g, ' ').slice(0, 220) : '');
     }).then(function () { busy = false; updateAI(); });
   });
 

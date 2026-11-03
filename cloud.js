@@ -59,7 +59,7 @@ export async function initCloud(cfg) {
       for (const name of names) {
         try {
           if (!models[name]) {
-            models[name] = getGenerativeModel(ai, { model: name, generationConfig: { responseMimeType: 'application/json', maxOutputTokens: 900 } });
+            models[name] = getGenerativeModel(ai, { model: name, generationConfig: { responseMimeType: 'application/json', maxOutputTokens: 4096 } });
           }
           const r = await models[name].generateContent(prompt);
           return r.response.text();

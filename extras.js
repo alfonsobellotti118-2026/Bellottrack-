@@ -688,6 +688,13 @@
     if (s >= 0 && e > s) {
       try { var o = JSON.parse(txt.slice(s, e + 1)); if (o && typeof o.risposta === 'string') return o; } catch (x) {}
     }
+    // Risposta tagliata a meta': recupera comunque il testo di "risposta".
+    var m = /"risposta"\s*:\s*"((?:[^"\\]|\\.)*)/.exec(txt);
+    if (m) {
+      var t = m[1];
+      try { t = JSON.parse('"' + t.replace(/\\$/, '') + '"'); } catch (x) { t = t.replace(/\\n/g, '\n').replace(/\\"/g, '"'); }
+      return { risposta: t.trim(), azioni: [] };
+    }
     return { risposta: txt.replace(/```(json)?/g, '').trim().slice(0, 1500), azioni: [] };
   }
   function okDate(s) { return isDate(s) && s >= B.addDays(B.todayStr(), -30) && s <= B.todayStr(); }

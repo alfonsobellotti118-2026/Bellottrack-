@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  
+ 
   var DEFAULTS = { on: { carbs: 370, protein: 180, fat: 45 }, off: { carbs: 260, protein: 180, fat: 45 } };
   var MACROS = [
     { key: 'carbs', label: 'Carboidrati' },

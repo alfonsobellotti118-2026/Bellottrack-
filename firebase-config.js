@@ -9,4 +9,3 @@ const firebaseConfig = {
 
 const ai = getAI(app);
 const model = getGenerativeModel(ai, { model: "gemini-3.8-flash" });
-

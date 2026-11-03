@@ -1,16 +1,6 @@
 (function () {
   'use strict';
-  const firebaseConfig = {
-  apiKey: "AIzaSyBuNpMHLUSguPXTqT8pi2PuEEQvz-fcNjs",
-  authDomain: "bellotrack-food-fit.firebaseapp.com",
-  projectId: "bellotrack-food-fit",
-  storageBucket: "bellotrack-food-fit.firebasestorage.app",
-  messagingSenderId: "1028193743073",
-  appId: "1:1028193743073:web:982df8f055dadb647307a0"
-};
-  const ai = getAI(app);
-const model = getGenerativeModel(ai, { model: "gemini-3.8-flash" });
-
+  
   var DEFAULTS = { on: { carbs: 370, protein: 180, fat: 45 }, off: { carbs: 260, protein: 180, fat: 45 } };
   var MACROS = [
     { key: 'carbs', label: 'Carboidrati' },

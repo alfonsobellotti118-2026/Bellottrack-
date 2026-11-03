@@ -789,8 +789,9 @@
       var msg;
       if (navigator.onLine === false) msg = 'Nessuna connessione: riprova.';
       else if (/quota|429|rate.?limit|resource.?exhausted/i.test(raw)) msg = 'Hai raggiunto il limite gratuito dell’AI: riprova tra qualche minuto.';
+      else if (/app ?check|\[401\]/i.test(raw)) msg = 'App Check sta bloccando le richieste: manca la sua configurazione.';
       else if (/403|permission|not been used|disabled|not enabled|api.?key|forbidden/i.test(raw)) msg = 'Il servizio AI non risulta ancora abilitato nel progetto Firebase.';
-      else if (/404|not found|model/i.test(raw)) msg = 'Il modello AI indicato non è stato trovato.';
+      else if (/\[404\]/.test(raw)) msg = 'Il modello AI indicato non è stato trovato.';
       else msg = 'L’AI non è riuscita a rispondere.';
       wait.textContent = msg + (raw ? '\nDettaglio: ' + raw.replace(/\s+/g, ' ').slice(0, 220) : '');
     }).then(function () { busy = false; updateAI(); });

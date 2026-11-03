@@ -12,6 +12,11 @@ const clean = (o) => JSON.parse(JSON.stringify(o));
 
 export async function initCloud(cfg) {
   const app = initializeApp(cfg.firebase);
+  // App Check (reCAPTCHA Enterprise): serve se la protezione e' attiva sul servizio AI.
+  if (cfg.appCheckKey) {
+    const { initializeAppCheck, ReCaptchaEnterpriseProvider } = await import('https://www.gstatic.com/firebasejs/12.19.0/firebase-app-check.js');
+    initializeAppCheck(app, { provider: new ReCaptchaEnterpriseProvider(cfg.appCheckKey), isTokenAutoRefreshEnabled: true });
+  }
   const auth = getAuth(app);
   let db;
   try { db = initializeFirestore(app, { localCache: persistentLocalCache() }); } catch (e) { db = getFirestore(app); }

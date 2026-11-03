@@ -1,8 +1,12 @@
 /* Service worker di Bellottrack food fit: tiene l'app disponibile anche senza connessione. */
-const VERSION = 'bellottrack-food-fit-v4';
+const VERSION = 'bellottrack-food-fit-v5';
 const SHELL = [
   './',
   'index.html',
+  'app.js',
+  'extras.js',
+  'cloud.js',
+  'firebase-config.js',
   'manifest.webmanifest',
   'icon-ab-192.png',
   'icon-ab-512.png',
@@ -11,7 +15,7 @@ const SHELL = [
   'foto.jpg'
 ];
 // Risorse esterne da conservare dopo il primo uso (scanner e font).
-const RUNTIME_HOSTS = ['cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'];
+const RUNTIME_HOSTS = ['cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com', 'www.gstatic.com'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(VERSION).then((cache) => cache.addAll(SHELL)).then(() => self.skipWaiting()));

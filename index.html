@@ -226,10 +226,91 @@ details .secondary { margin-top: 12px; }
   .bar > i { transition: width 0.3s ease, background-size 0.3s ease; }
   .day .col i { transition: height 0.3s ease, background-size 0.3s ease; }
 }
+
+/* Schede, barra in basso e componenti nuovi */
+body { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+.view { display: flex; flex-direction: column; gap: 14px; }
+.vhead { display: flex; align-items: center; gap: 12px; padding: 6px 2px 0; }
+.vhead h1 { font-size: 34px; text-transform: uppercase; letter-spacing: 0.02em; }
+.vhead svg { width: 48px; height: 22px; color: var(--gold); }
+.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; background: rgba(21,21,23,0.97); border-top: 1px solid var(--line);
+  display: grid; grid-template-columns: repeat(5, 1fr); padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
+.tab { border: 0; background: none; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-width: 0; }
+.tab svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tab[aria-current="page"] { color: var(--red); }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(92px + env(safe-area-inset-bottom, 0px)); z-index: 60; max-width: min(92vw, 520px);
+  background: var(--raise); border: 1px solid var(--gold); color: var(--ink); padding: 12px 16px; border-radius: 10px; font-weight: 600; box-shadow: 0 8px 30px rgba(0,0,0,0.6); }
+.toast.err { border-color: var(--warn); }
+
+.silwrap { margin-top: 12px; background: radial-gradient(ellipse at 50% 30%, #2a1214 0%, #121214 70%); border: 1px solid var(--line); border-radius: 10px; padding: 8px 4px 0; }
+.silwrap svg { display: block; width: 100%; height: auto; max-height: 440px; }
+.range { display: block; margin-top: 14px; font-size: 15px; color: var(--ink); }
+.range b { display: inline; }
+.range input[type=range] { height: 32px; padding: 0; background: none; border: 0; accent-color: var(--red); }
+.sil-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
+.stat { background: var(--raise); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-width: 0; }
+.stat .sl { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; }
+.stat .sv { font-family: var(--font-display); font-size: 24px; font-variant-numeric: tabular-nums; }
+.stat .sd { font-size: 13px; font-variant-numeric: tabular-nums; }
+.up { color: #5BD68A; } .down { color: var(--protein); } .flat { color: var(--muted); }
+.chartwrap { margin-top: 12px; }
+.chartwrap svg { display: block; width: 100%; height: auto; }
+.plain { list-style: none; margin: 8px 0 0; padding: 0; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.plain li { display: flex; justify-content: space-between; padding: 4px 0; border-top: 1px solid var(--line); }
+.hist { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; }
+.hist li { display: grid; grid-template-columns: 76px 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); font-size: 14px; font-variant-numeric: tabular-nums; }
+.hist li:first-child { border-top: 0; }
+.hist .hd { font-weight: 700; text-transform: capitalize; }
+.hist .hk { text-align: right; color: var(--muted); }
+.hist .bar { margin: 0; }
+
+.gform { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+.goals { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.goal { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--raise); }
+.goal .gt { font-weight: 700; overflow-wrap: anywhere; }
+.goal .gs { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.goal .gbar { grid-column: 1 / -1; }
+.goal .gbar .bar { margin: 0; }
+.goal.done { border-color: var(--gold); }
+.goal .gm { width: 38px; height: 50px; grid-column: 2; grid-row: 1 / span 2; }
+.goal .gdel { grid-column: 1 / -1; justify-self: end; border: 0; background: none; color: var(--muted); font-size: 13px; text-decoration: underline; padding: 2px 0; }
+.medals { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 12px; margin-top: 12px; }
+.medal { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; font-size: 12px; color: var(--muted); }
+.medal svg { width: 56px; height: 74px; }
+.medal b { color: var(--ink); font-size: 13px; overflow-wrap: anywhere; }
+
+.chat { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; max-height: 52vh; overflow-y: auto; }
+.bubble { max-width: 92%; padding: 10px 12px; border-radius: 12px; font-size: 15px; overflow-wrap: anywhere; white-space: pre-wrap; }
+.bubble.me { align-self: flex-end; background: var(--red-deep); }
+.bubble.ai { align-self: flex-start; background: var(--raise); border: 1px solid var(--line); }
+.acard { align-self: stretch; border: 1px solid var(--gold); border-radius: 10px; padding: 10px 12px; background: #1b1810; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+.acard .at { font-weight: 700; }
+.acard .pactions > button { height: 40px; min-height: 40px; }
+.acard.applied { border-color: var(--line); background: var(--raise); opacity: 0.75; }
+
+.acct-form { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+.check { flex-direction: row; align-items: flex-start; gap: 10px; color: var(--ink); font-size: 14px; }
+.check input { width: 22px; height: 22px; flex: none; margin-top: 1px; accent-color: var(--red); }
+.linkbtn { border: 0; background: none; color: var(--gold); text-decoration: underline; padding: 4px 0; font-size: 14px; text-align: left; }
+.banner { border: 1px solid var(--gold); border-radius: 10px; padding: 12px; background: #1b1810; font-size: 14px; display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.privacy { font-size: 14px; color: var(--muted); display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.privacy p { margin: 0; }
+.cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 380px) { .cols2 { grid-template-columns: 1fr; } .tab { font-size: 10px; letter-spacing: 0.02em; } }
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="g-bronze" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E0A070"/><stop offset="1" stop-color="#8A4F1D"/></linearGradient>
+    <linearGradient id="g-silver" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F1F3F6"/><stop offset="1" stop-color="#8F96A1"/></linearGradient>
+    <linearGradient id="g-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE48A"/><stop offset="1" stop-color="#C98A06"/></linearGradient>
+  </defs>
+  <symbol id="t-diary" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></symbol>
+  <symbol id="t-chart" viewBox="0 0 24 24"><path d="M4 4v16h16"/><path d="M8 15l4-5 3 3 5-7"/></symbol>
+  <symbol id="t-medal" viewBox="0 0 24 24"><circle cx="12" cy="15" r="5"/><path d="M8.5 3l3.5 7 3.5-7"/></symbol>
+  <symbol id="t-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="t-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></symbol>
   <symbol id="i-barbell" viewBox="0 0 64 24">
     <rect x="8" y="11" width="48" height="2"/>
     <rect x="3" y="10" width="7" height="4" rx="1"/><rect x="54" y="10" width="7" height="4" rx="1"/>
@@ -245,6 +326,7 @@ details .secondary { margin-top: 12px; }
 </svg>
 
 <main class="wrap">
+  <div class="view" data-view="diario">
   <header class="hero">
     <div class="hero-text">
       <svg class="ic logo" aria-hidden="true" focusable="false"><use href="#i-barbell"/></svg>
@@ -421,6 +503,145 @@ details .secondary { margin-top: 12px; }
     </details>
   </section>
 
+  </div>
+
+  <div class="view" data-view="progressi" hidden>
+    <header class="vhead"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-barbell"/></svg><h1>Progressi</h1></header>
+    <section class="card" id="pr-need" hidden>
+      <p class="pnote">Per vedere la sagoma servono sesso, età, altezza e peso.</p>
+      <div class="pactions" style="margin-top:10px"><button class="primary" type="button" data-goto="profilo">Completa il profilo</button></div>
+    </section>
+    <section class="card" id="pr-sil" aria-labelledby="sil-h">
+      <h2 id="sil-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-dumbbell"/></svg>Sagoma virtuale</h2>
+      <div class="silwrap"><svg id="sil" viewBox="0 0 440 430" role="img" aria-label="Sagoma di oggi e sagoma stimata"></svg></div>
+      <label class="range" for="weeks">Tra <b id="weeks-val">12</b> settimane
+        <input type="range" id="weeks" min="0" max="52" step="1" value="12">
+      </label>
+      <div class="sil-stats" id="sil-stats"></div>
+      <p class="hintline" id="sil-note"></p>
+    </section>
+    <section class="card" aria-labelledby="w-h">
+      <h2 id="w-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-barbell"/></svg>Peso</h2>
+      <form class="searchform" id="w-form" autocomplete="off">
+        <input id="w-kg" type="text" inputmode="decimal" placeholder="Peso di oggi in kg" aria-label="Peso di oggi in kg">
+        <button class="primary" type="submit">Registra</button>
+      </form>
+      <p class="msg" id="w-msg" role="status"></p>
+      <div class="chartwrap"><svg id="wchart" viewBox="0 0 360 190" role="img" aria-label="Andamento del peso"></svg></div>
+      <ul class="plain" id="w-list"></ul>
+    </section>
+    <section class="card" aria-labelledby="h-h">
+      <h2 id="h-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-dumbbell"/></svg>Ultimi 14 giorni</h2>
+      <ul class="hist" id="hist"></ul>
+    </section>
+  </div>
+
+  <div class="view" data-view="obiettivi" hidden>
+    <header class="vhead"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-barbell"/></svg><h1>Obiettivi</h1></header>
+    <section class="card" aria-labelledby="gn-h">
+      <h2 id="gn-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-dumbbell"/></svg>Nuovo obiettivo</h2>
+      <form class="gform" id="g-form" autocomplete="off">
+        <label for="g-type">Che obiettivo vuoi raggiungere?
+          <select id="g-type">
+            <option value="peso">Raggiungere un peso (kg)</option>
+            <option value="serie">Registrare i pasti per giorni di fila</option>
+            <option value="proteine">Giorni con le proteine raggiunte</option>
+            <option value="calorie">Giorni con le calorie nell’obiettivo</option>
+            <option value="allenamenti">Giorni di allenamento (ON) registrati</option>
+            <option value="pasti">Alimenti registrati in totale</option>
+          </select>
+        </label>
+        <label for="g-target"><span id="g-target-lab">Peso da raggiungere (kg)</span>
+          <input id="g-target" type="text" inputmode="decimal" placeholder="Es. 85">
+        </label>
+        <p class="hintline" id="g-hint"></p>
+        <button class="primary" type="submit">Aggiungi obiettivo</button>
+      </form>
+      <p class="msg" id="g-msg" role="status"></p>
+      <h3 class="sub">Idee rapide</h3>
+      <div class="recent" id="g-presets"></div>
+    </section>
+    <section class="card" aria-labelledby="gl-h">
+      <h2 id="gl-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-barbell"/></svg>I miei obiettivi</h2>
+      <ul class="goals" id="goals"></ul>
+      <p class="empty" id="goals-empty">Non hai ancora obiettivi. Creane uno qui sopra: quando lo raggiungi ricevi una medaglia.</p>
+    </section>
+    <section class="card" aria-labelledby="md-h">
+      <h2 id="md-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-dumbbell"/></svg>Bacheca medaglie</h2>
+      <div class="medals" id="medals"></div>
+      <p class="empty" id="medals-empty">Le medaglie che conquisti compariranno qui.</p>
+    </section>
+  </div>
+
+  <div class="view" data-view="coach" hidden>
+    <header class="vhead"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-barbell"/></svg><h1>Coach</h1></header>
+    <section class="card" aria-labelledby="cb-h">
+      <h2 id="cb-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-dumbbell"/></svg>Coach automatico</h2>
+      <div id="coach-body"></div>
+      <div class="pactions" style="margin-top:12px"><button class="secondary" id="coach-apply" type="button" hidden>Usa questi obiettivi</button></div>
+    </section>
+    <section class="card" id="ai-card" aria-labelledby="ai-h">
+      <h2 id="ai-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-barbell"/></svg>Chiedi all’AI</h2>
+      <p class="hintline" id="ai-status"></p>
+      <div class="chat" id="chat" aria-live="polite"></div>
+      <form class="searchform" id="ai-form" autocomplete="off">
+        <input id="ai-q" type="text" placeholder="Es. ho mangiato 200 g di pollo e 150 g di riso" aria-label="Scrivi all’AI" maxlength="400">
+        <button class="primary" id="ai-send" type="submit">Invia</button>
+      </form>
+      <div class="recent" id="ai-sugg" style="margin-top:10px"></div>
+      <p class="hintline">L’AI può sbagliare e non sostituisce un medico o un dietista. Ogni modifica ai tuoi dati parte solo se tocchi Applica.</p>
+    </section>
+  </div>
+
+  <div class="view" data-view="profilo" hidden>
+    <header class="vhead"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-barbell"/></svg><h1>Profilo</h1></header>
+    <section class="card" id="acct" aria-labelledby="ac-h">
+      <h2 id="ac-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-dumbbell"/></svg>Account</h2>
+      <div id="acct-body"></div>
+    </section>
+    <section class="card" aria-labelledby="dp-h">
+      <h2 id="dp-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-barbell"/></svg>Dati personali</h2>
+      <form class="acct-form" id="prof-form" autocomplete="off" novalidate>
+        <div class="cols2">
+          <label for="p-sex">Sesso
+            <select id="p-sex"><option value="">Scegli</option><option value="m">Uomo</option><option value="f">Donna</option></select>
+          </label>
+          <label for="p-age">Età (anni)
+            <input id="p-age" type="text" inputmode="numeric" placeholder="Es. 30">
+          </label>
+        </div>
+        <div class="cols2">
+          <label for="p-height">Altezza (cm)
+            <input id="p-height" type="text" inputmode="decimal" placeholder="Es. 178">
+          </label>
+          <label for="p-weight">Peso (kg)
+            <input id="p-weight" type="text" inputmode="decimal" placeholder="Es. 80">
+          </label>
+        </div>
+        <label for="p-level">Attività settimanale
+          <select id="p-level">
+            <option value="sedentario">Sedentario, poco movimento</option>
+            <option value="leggero">Leggera, 1-3 allenamenti</option>
+            <option value="moderato" selected>Moderata, 3-5 allenamenti</option>
+            <option value="intenso">Intensa, 6-7 allenamenti</option>
+            <option value="estremo">Estrema, doppi allenamenti o lavoro fisico</option>
+          </select>
+        </label>
+        <div class="cols2">
+          <label for="p-goal">Obiettivo
+            <select id="p-goal"><option value="massa">Aumentare la massa</option><option value="definizione">Definizione</option><option value="mantenimento">Mantenimento</option></select>
+          </label>
+          <label for="p-exp">Esperienza in palestra
+            <select id="p-exp"><option value="principiante">Principiante, meno di 1 anno</option><option value="intermedio" selected>Intermedio, 1-3 anni</option><option value="avanzato">Avanzato, oltre 3 anni</option></select>
+          </label>
+        </div>
+        <label for="p-bf">Grasso corporeo in percentuale (facoltativo)
+          <input id="p-bf" type="text" inputmode="decimal" placeholder="Se vuoto lo stimo io">
+        </label>
+        <button class="primary" type="submit">Salva dati</button>
+        <p class="msg" id="p-msg" role="status"></p>
+      </form>
+    </section>
   <section class="card">
     <details>
       <summary>Backup dei dati</summary>
@@ -433,7 +654,32 @@ details .secondary { margin-top: 12px; }
       <p class="msg" id="bk-msg" role="status" style="color:var(--muted)"></p>
     </details>
   </section>
+
+    <section class="card">
+      <details>
+        <summary>Informativa privacy</summary>
+        <div class="privacy">
+          <p><b>Quali dati.</b> Peso, età, sesso, altezza, pasti, obiettivi e medaglie. Sono dati sulla salute e restano associati al tuo indirizzo email.</p>
+          <p><b>Dove.</b> Con un account, i dati sono salvati nel servizio Firebase di Google. Senza account restano solo su questo telefono.</p>
+          <p><b>AI.</b> Quando scrivi al coach, un riepilogo dei tuoi dati e la tua domanda vengono inviati a Gemini, il modello di Google. Non scrivere informazioni che non vuoi condividere.</p>
+          <p><b>Solo maggiorenni.</b> L’app non è una consulenza medica: per problemi di salute rivolgiti a un medico o a un dietista.</p>
+          <p><b>I tuoi diritti.</b> Puoi esportare i dati da «Backup dei dati» e cancellare account e dati da «Account».</p>
+          <p><b>Contatto del gestore:</b> <span id="privacy-contact">da indicare</span></p>
+        </div>
+      </details>
+    </section>
+  </div>
 </main>
+
+<nav class="tabbar" aria-label="Sezioni">
+  <button class="tab" data-tab="diario" type="button"><svg aria-hidden="true" focusable="false"><use href="#t-diary"/></svg><span>Diario</span></button>
+  <button class="tab" data-tab="progressi" type="button"><svg aria-hidden="true" focusable="false"><use href="#t-chart"/></svg><span>Progressi</span></button>
+  <button class="tab" data-tab="obiettivi" type="button"><svg aria-hidden="true" focusable="false"><use href="#t-medal"/></svg><span>Obiettivi</span></button>
+  <button class="tab" data-tab="coach" type="button"><svg aria-hidden="true" focusable="false"><use href="#t-chat"/></svg><span>Coach</span></button>
+  <button class="tab" data-tab="profilo" type="button"><svg aria-hidden="true" focusable="false"><use href="#t-user"/></svg><span>Profilo</span></button>
+</nav>
+<div id="toast" class="toast" hidden role="status"></div>
+
 
 <div class="scanner" id="scanner" hidden role="dialog" aria-modal="true" aria-label="Scansione codice a barre">
   <video id="scan-video" playsinline muted></video>
@@ -442,865 +688,9 @@ details .secondary { margin-top: 12px; }
   <div class="bar-bottom"><span class="smsg" id="scan-status">Inquadra il codice a barre</span></div>
 </div>
 
-<script>
-(function () {
-  'use strict';
-  var DEFAULTS = { on: { carbs: 370, protein: 180, fat: 45 }, off: { carbs: 260, protein: 180, fat: 45 } };
-  var MACROS = [
-    { key: 'carbs', label: 'Carboidrati' },
-    { key: 'protein', label: 'Proteine' },
-    { key: 'fat', label: 'Grassi' }
-  ];
-  var DAY_LETTERS = ['D', 'L', 'M', 'M', 'G', 'V', 'S'];
-  var ALLERGENS = {
-    'gluten': 'glutine', 'milk': 'latte', 'eggs': 'uova', 'soybeans': 'soia', 'nuts': 'frutta a guscio',
-    'peanuts': 'arachidi', 'fish': 'pesce', 'crustaceans': 'crostacei', 'molluscs': 'molluschi',
-    'celery': 'sedano', 'mustard': 'senape', 'sesame-seeds': 'sesamo',
-    'sulphur-dioxide-and-sulphites': 'solfiti', 'lupin': 'lupini'
-  };
-  /* Alimenti base: valori medi indicativi per 100 g (n nome, c carbo, p proteine, f grassi, s porzione tipica in g, a allergeni). */
-  var BASE = [
-    { n: 'Petto di pollo (crudo)', c: 0, p: 23, f: 2 },
-    { n: 'Petto di tacchino (crudo)', c: 0, p: 24, f: 1 },
-    { n: 'Manzo magro (crudo)', c: 0, p: 21, f: 4 },
-    { n: 'Bresaola', c: 0, p: 32, f: 2 },
-    { n: 'Prosciutto crudo', c: 0, p: 26, f: 18 },
-    { n: 'Uovo intero', c: 0.7, p: 12.5, f: 9.5, s: 50, a: ['eggs'] },
-    { n: 'Albume d’uovo', c: 0.7, p: 11, f: 0.2, a: ['eggs'] },
-    { n: 'Tonno al naturale (sgocciolato)', c: 0, p: 25, f: 1, a: ['fish'] },
-    { n: 'Salmone (crudo)', c: 0, p: 20, f: 13, a: ['fish'] },
-    { n: 'Merluzzo o nasello (crudo)', c: 0, p: 17, f: 0.5, a: ['fish'] },
-    { n: 'Riso (crudo)', c: 80, p: 7, f: 0.5 },
-    { n: 'Riso (cotto)', c: 28, p: 2.5, f: 0.3 },
-    { n: 'Pasta di semola (cruda)', c: 72, p: 12, f: 1.5, a: ['gluten'] },
-    { n: 'Pasta di semola (cotta)', c: 31, p: 5.5, f: 1, a: ['gluten'] },
-    { n: 'Pane comune', c: 58, p: 8.5, f: 0.5, a: ['gluten'] },
-    { n: 'Fiocchi d’avena', c: 60, p: 13, f: 7, a: ['gluten'] },
-    { n: 'Patate (crude)', c: 17, p: 2, f: 0.1 },
-    { n: 'Patate dolci (crude)', c: 20, p: 1.6, f: 0.1 },
-    { n: 'Quinoa (cruda)', c: 64, p: 14, f: 6 },
-    { n: 'Cous cous (crudo)', c: 72, p: 13, f: 1.5, a: ['gluten'] },
-    { n: 'Gallette di riso', c: 80, p: 8, f: 3 },
-    { n: 'Lenticchie (cotte)', c: 16, p: 9, f: 0.4 },
-    { n: 'Ceci (cotti)', c: 20, p: 8, f: 2.5 },
-    { n: 'Fagioli (cotti)', c: 17, p: 8, f: 0.6 },
-    { n: 'Banana', c: 21, p: 1, f: 0.2, s: 120 },
-    { n: 'Mela', c: 12, p: 0.3, f: 0.2, s: 150 },
-    { n: 'Arancia', c: 8, p: 0.7, f: 0.2, s: 150 },
-    { n: 'Olio extravergine d’oliva', c: 0, p: 0, f: 100, s: 10 },
-    { n: 'Mandorle', c: 9, p: 21, f: 50, a: ['nuts'] },
-    { n: 'Noci', c: 7, p: 15, f: 65, a: ['nuts'] },
-    { n: 'Burro di arachidi', c: 18, p: 25, f: 50, a: ['peanuts'] },
-    { n: 'Parmigiano Reggiano', c: 0, p: 33, f: 28, a: ['milk'] },
-    { n: 'Yogurt greco 0%', c: 4, p: 10, f: 0.2, s: 150, a: ['milk'] },
-    { n: 'Latte parzialmente scremato', c: 5, p: 3.4, f: 1.6, a: ['milk'] },
-    { n: 'Fiocchi di latte', c: 3, p: 11, f: 4, a: ['milk'] },
-    { n: 'Ricotta vaccina', c: 3.5, p: 8.8, f: 8, a: ['milk'] },
-    { n: 'Mozzarella', c: 1, p: 18, f: 17, a: ['milk'] },
-    { n: 'Zucchero', c: 100, p: 0, f: 0 },
-    { n: 'Miele', c: 80, p: 0.4, f: 0 },
-    { n: 'Broccoli', c: 3, p: 3, f: 0.4 },
-    { n: 'Spinaci', c: 1.5, p: 3, f: 0.7 },
-    { n: 'Zucchine', c: 2.5, p: 1.3, f: 0.1 },
-    { n: 'Insalata', c: 2, p: 1.5, f: 0.2 },
-    { n: 'Pomodori', c: 3, p: 1, f: 0.2 },
-    { n: 'Carote', c: 7, p: 1, f: 0.2 }
-  ];
 
-  var state = { meals: [], presets: JSON.parse(JSON.stringify(DEFAULTS)), modes: {}, date: todayStr() };
-  var store = null;
-  var product = null;
-  var loaded = false;
-
-  function $(id) { return document.getElementById(id); }
-  function pad(n) { return (n < 10 ? '0' : '') + n; }
-  function ymd(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
-  function todayStr() { return ymd(new Date()); }
-  function parts(s) { var p = s.split('-'); return [Number(p[0]), Number(p[1]), Number(p[2])]; }
-  function addDays(s, n) { var p = parts(s); return ymd(new Date(p[0], p[1] - 1, p[2] + n)); }
-  function toDate(s) { var p = parts(s); return new Date(p[0], p[1] - 1, p[2]); }
-  function fmtLong(s) { return toDate(s).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }); }
-  function nf(n) { return Math.round(n).toLocaleString('it-IT'); }
-  function num(v) {
-    var x = parseFloat(String(v == null ? '' : v).replace(',', '.'));
-    return isFinite(x) && x > 0 ? x : 0;
-  }
-  function round1(n) { return Math.round(n * 10) / 10; }
-  function round2(n) { return Math.round(n * 100) / 100; }
-  function fmt1(n) { return round1(n).toLocaleString('it-IT'); }
-  function fmtN(v) { return v === null || v === undefined ? '?' : fmt1(v); }
-  function kcalFromMacros(c, p, f) { return Math.round(4 * c + 4 * p + 9 * f); }
-  function kcalOf(m) { return m.kcal > 0 ? Math.round(m.kcal) : kcalFromMacros(m.carbs || 0, m.protein || 0, m.fat || 0); }
-  function modeOf(date) { return state.modes[date] === 'on' ? 'on' : 'off'; }
-  function targetsFor(date) { return state.presets[modeOf(date)]; }
-  function targetKcal(date) { var t = targetsFor(date || state.date); return kcalFromMacros(t.carbs, t.protein, t.fat); }
-  function newId() { return 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-  function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
-
-  function dayMeals(date) {
-    return state.meals.filter(function (m) { return m.date === date; })
-      .sort(function (a, b) { return (a.createdAt || 0) - (b.createdAt || 0); });
-  }
-  function totalsOf(list) {
-    var t = { kcal: 0, carbs: 0, protein: 0, fat: 0 };
-    list.forEach(function (m) { t.kcal += kcalOf(m); t.carbs += m.carbs || 0; t.protein += m.protein || 0; t.fat += m.fat || 0; });
-    return t;
-  }
-
-  /* Barra che va dal freddo (inizio) al caldo (fine): il gradiente copre sempre tutta la barra, il riempimento ne mostra la parte raggiunta. */
-  function setHeat(el, f) {
-    var w = Math.max(0, Math.min(1, f));
-    el.style.width = (w * 100) + '%';
-    el.style.backgroundSize = (w > 0 ? 100 / w : 100) + '% 100%';
-    el.classList.toggle('hot', f > 1);
-  }
-
-  /* ---------- Disegno della pagina ---------- */
-  function render() {
-    var isToday = state.date === todayStr();
-    $('date-label').textContent = isToday ? 'Oggi, ' + fmtLong(state.date) : fmtLong(state.date);
-    $('today').hidden = isToday;
-
-    var list = dayMeals(state.date);
-    var t = totalsOf(list);
-    var tk = targetKcal();
-    var tg = targetsFor(state.date);
-
-    $('kcal-num').textContent = nf(t.kcal);
-    $('kcal-of').textContent = '/ ' + nf(tk) + ' kcal';
-    setHeat($('kcal-fill'), tk > 0 ? t.kcal / tk : 0);
-    var left = tk - t.kcal;
-    var leftEl = $('kcal-left');
-    if (left >= 0) { leftEl.textContent = 'Ti restano ' + nf(left) + ' kcal'; leftEl.className = 'kcal-left'; }
-    else { leftEl.textContent = 'Sei sopra di ' + nf(-left) + ' kcal'; leftEl.className = 'kcal-left over'; }
-
-    var mc = $('macros');
-    mc.textContent = '';
-    MACROS.forEach(function (m) {
-      var val = t[m.key], target = tg[m.key];
-      var wrap = document.createElement('div');
-      var head = document.createElement('div'); head.className = 'macro-head';
-      var name = document.createElement('span'); name.className = 'name'; name.textContent = m.label;
-      var v = document.createElement('span'); v.className = 'val';
-      var b = document.createElement('b'); b.textContent = fmt1(val);
-      v.appendChild(b);
-      v.appendChild(document.createTextNode(' / ' + fmt1(target) + ' g'));
-      if (val > target) {
-        var o = document.createElement('span'); o.className = 'over'; o.textContent = '+' + fmt1(val - target) + ' g';
-        v.appendChild(o);
-      }
-      head.appendChild(name); head.appendChild(v);
-      var bar = document.createElement('div'); bar.className = 'bar';
-      var fill = document.createElement('i');
-      setHeat(fill, target > 0 ? val / target : 0);
-      bar.appendChild(fill);
-      wrap.appendChild(head); wrap.appendChild(bar);
-      mc.appendChild(wrap);
-    });
-
-    renderMode();
-    renderMeals(list);
-    renderRecent();
-    renderWeek();
-    updatePreview();
-    updateProductCalc();
-  }
-
-  function renderMode() {
-    var cur = modeOf(state.date);
-    ['on', 'off'].forEach(function (m) {
-      $('mode-' + m).setAttribute('aria-pressed', cur === m ? 'true' : 'false');
-      var t = state.presets[m];
-      $('mode-' + m + '-vals').textContent = fmt1(t.carbs) + ' C · ' + fmt1(t.protein) + ' P · ' + fmt1(t.fat) + ' G';
-    });
-  }
-
-  function setMode(mode) {
-    var modes = Object.assign({}, state.modes);
-    modes[state.date] = mode;
-    store.saveSettings({ presets: state.presets, modes: modes }).catch(function () {
-      $('scan-msg').textContent = 'Non sono riuscito a salvare la scelta ON/OFF.';
-    });
-  }
-
-  var armTimers = new WeakMap();
-  function onDelete(btn, m) {
-    if (!btn.classList.contains('armed')) {
-      btn.classList.add('armed');
-      btn.textContent = 'Conferma eliminazione';
-      armTimers.set(btn, setTimeout(function () { btn.classList.remove('armed'); btn.textContent = 'Elimina'; }, 3000));
-      return;
-    }
-    clearTimeout(armTimers.get(btn));
-    btn.disabled = true;
-    store.remove(m.id).catch(function () {
-      btn.disabled = false; btn.classList.remove('armed'); btn.textContent = 'Elimina';
-      $('msg').textContent = 'Non sono riuscito a eliminare l’alimento. Riprova.';
-    });
-  }
-
-  /* Cambia il peso di un alimento e ricalcola calorie e macro del totale. */
-  function onWeightChange(m, input) {
-    var g = num(input.value);
-    if (!(g > 0) || !m.per100) { input.value = String(m.grams || '').replace('.', ','); return; }
-    var f = g / 100, p = m.per100;
-    store.update(m.id, {
-      grams: round1(g),
-      carbs: round1(p.carbs * f), protein: round1(p.protein * f), fat: round1(p.fat * f),
-      kcal: Math.round((p.kcal > 0 ? p.kcal : kcalFromMacros(p.carbs, p.protein, p.fat)) * f)
-    }).catch(function () { $('msg').textContent = 'Non sono riuscito a cambiare il peso. Riprova.'; });
-  }
-
-  function renderMeals(list) {
-    var ul = $('meals');
-    ul.textContent = '';
-    $('empty').hidden = list.length > 0;
-    list.forEach(function (m) {
-      var li = document.createElement('li'); li.className = 'meal';
-      var title = document.createElement('div'); title.className = 'title';
-      var slot = document.createElement('span'); slot.className = 'slot'; slot.textContent = m.slot || 'pasto';
-      title.appendChild(slot);
-      title.appendChild(document.createTextNode(m.name || ''));
-      var kc = document.createElement('div'); kc.className = 'kc'; kc.textContent = nf(kcalOf(m)) + ' kcal';
-      var mac = document.createElement('div'); mac.className = 'mac';
-      [['C', m.carbs], ['P', m.protein], ['G', m.fat]].forEach(function (x) {
-        var s = document.createElement('span'); s.textContent = x[0] + ' ' + fmt1(x[1] || 0) + ' g'; mac.appendChild(s);
-      });
-      var tools = document.createElement('div'); tools.className = 'tools';
-      if (m.per100 && m.grams > 0) {
-        var lab = document.createElement('label'); lab.className = 'wg';
-        lab.appendChild(document.createTextNode('Peso'));
-        var inp = document.createElement('input');
-        inp.type = 'text'; inp.inputMode = 'decimal'; inp.value = String(m.grams).replace('.', ',');
-        inp.setAttribute('aria-label', 'Peso in grammi di ' + (m.name || 'alimento'));
-        inp.addEventListener('change', function () { onWeightChange(m, inp); });
-        lab.appendChild(inp);
-        lab.appendChild(document.createTextNode('g'));
-        tools.appendChild(lab);
-      } else {
-        tools.appendChild(document.createElement('span'));
-      }
-      var del = document.createElement('button');
-      del.type = 'button'; del.className = 'del'; del.textContent = 'Elimina';
-      del.setAttribute('aria-label', 'Elimina ' + (m.name || 'alimento'));
-      del.addEventListener('click', function () { onDelete(del, m); });
-      tools.appendChild(del);
-      li.appendChild(title); li.appendChild(kc); li.appendChild(mac); li.appendChild(tools);
-      ul.appendChild(li);
-    });
-  }
-
-  function renderRecent() {
-    var seen = {}, out = [];
-    var sorted = state.meals.slice().sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
-    for (var i = 0; i < sorted.length && out.length < 6; i++) {
-      var m = sorted[i];
-      var k = (m.name || '').toLowerCase() + '|' + (m.per100 ? JSON.stringify(m.per100) : m.carbs + '|' + m.protein + '|' + m.fat);
-      if (!m.name || seen[k]) continue;
-      seen[k] = 1; out.push(m);
-    }
-    var box = $('recent');
-    box.textContent = '';
-    $('recent-wrap').hidden = out.length === 0;
-    out.forEach(function (m) {
-      var b = document.createElement('button');
-      b.type = 'button'; b.className = 'chip';
-      b.textContent = m.name + (m.grams ? ' · ' + fmt1(m.grams) + ' g' : '') + ' · ' + nf(kcalOf(m)) + ' kcal';
-      b.addEventListener('click', function () { fillFormFromMeal(m); });
-      box.appendChild(b);
-    });
-  }
-
-  function fillFormFromMeal(m) {
-    function s(v) { return v ? String(v).replace('.', ',') : ''; }
-    $('f-name').value = m.name;
-    if (m.slot) $('f-slot').value = m.slot;
-    if (m.per100) {
-      $('f-basis').value = 'per100';
-      $('f-grams').value = s(m.grams);
-      $('f-carbs').value = s(m.per100.carbs); $('f-protein').value = s(m.per100.protein); $('f-fat').value = s(m.per100.fat);
-      $('f-kcal').value = m.per100.kcal > 0 ? String(m.per100.kcal).replace('.', ',') : '';
-    } else {
-      $('f-basis').value = 'total';
-      $('f-grams').value = s(m.grams);
-      $('f-carbs').value = s(m.carbs); $('f-protein').value = s(m.protein); $('f-fat').value = s(m.fat);
-      $('f-kcal').value = m.kcal > 0 ? String(m.kcal) : '';
-    }
-    updatePreview();
-    $('add-btn').focus();
-  }
-
-  function renderWeek() {
-    var wk = $('week');
-    wk.textContent = '';
-    var today = todayStr();
-    for (var i = 6; i >= 0; i--) {
-      var d = addDays(today, -i);
-      var tot = totalsOf(dayMeals(d));
-      var tk = targetKcal(d);
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'day' + (d === state.date ? ' sel' : '');
-      btn.setAttribute('aria-label', fmtLong(d) + ', ' + nf(tot.kcal) + ' kcal');
-      var col = document.createElement('div'); col.className = 'col';
-      var fill = document.createElement('i');
-      var w = tk > 0 ? Math.max(0, Math.min(1, tot.kcal / tk)) : 0;
-      fill.style.height = (w * 100) + '%';
-      fill.style.backgroundSize = '100% ' + (w > 0 ? 100 / w : 100) + '%';
-      col.appendChild(fill);
-      var dl = document.createElement('span'); dl.className = 'dl'; dl.textContent = DAY_LETTERS[toDate(d).getDay()];
-      var dk = document.createElement('span'); dk.className = 'dk'; dk.textContent = tot.kcal ? nf(tot.kcal) : '–';
-      btn.appendChild(col); btn.appendChild(dl); btn.appendChild(dk);
-      (function (dd) { btn.addEventListener('click', function () { state.date = dd; render(); }); })(d);
-      wk.appendChild(btn);
-    }
-  }
-
-  /* ---------- Modulo a mano con peso ---------- */
-  function readForm() {
-    var c = num($('f-carbs').value), p = num($('f-protein').value), f = num($('f-fat').value), k = num($('f-kcal').value);
-    return { c: c, p: p, f: f, k: k > 0 ? k : kcalFromMacros(c, p, f), anyValue: c > 0 || p > 0 || f > 0 || k > 0,
-      grams: num($('f-grams').value), basis: $('f-basis').value };
-  }
-  /* Calcola i totali del pasto a partire dal peso e dai valori inseriti. Restituisce null se manca il peso con valori per 100 g. */
-  function mealValues(r) {
-    if (r.basis === 'per100') {
-      if (!(r.grams > 0)) return null;
-      var f = r.grams / 100;
-      return {
-        grams: round1(r.grams),
-        per100: { carbs: round2(r.c), protein: round2(r.p), fat: round2(r.f), kcal: Math.round(r.k) },
-        carbs: round1(r.c * f), protein: round1(r.p * f), fat: round1(r.f * f), kcal: Math.round(r.k * f)
-      };
-    }
-    var res = { carbs: round1(r.c), protein: round1(r.p), fat: round1(r.f), kcal: Math.round(r.k) };
-    if (r.grams > 0) {
-      var inv = 100 / r.grams;
-      res.grams = round1(r.grams);
-      res.per100 = { carbs: round2(r.c * inv), protein: round2(r.p * inv), fat: round2(r.f * inv), kcal: Math.round(r.k * inv) };
-    }
-    return res;
-  }
-  function updatePreview() {
-    var r = readForm();
-    var v = mealValues(r);
-    var el = $('preview');
-    if (!r.anyValue) { el.textContent = ''; return; }
-    if (!v) { el.textContent = 'Inserisci il peso per il totale'; return; }
-    el.textContent = '≈ ' + nf(v.kcal) + ' kcal · C ' + fmt1(v.carbs) + ' · P ' + fmt1(v.protein) + ' · G ' + fmt1(v.fat);
-  }
-
-  async function onSubmit(e) {
-    e.preventDefault();
-    var msg = $('msg');
-    msg.textContent = '';
-    var name = $('f-name').value.trim();
-    var r = readForm();
-    if (!name) { msg.textContent = 'Scrivi cosa hai mangiato.'; $('f-name').focus(); return; }
-    if (!r.anyValue) { msg.textContent = 'Inserisci almeno un valore tra carbo, proteine, grassi o calorie.'; $('f-carbs').focus(); return; }
-    var v = mealValues(r);
-    if (!v) { msg.textContent = 'Inserisci il peso in grammi, oppure scegli «tutta la porzione».'; $('f-grams').focus(); return; }
-    var meal = Object.assign({ id: newId(), date: state.date, slot: $('f-slot').value, name: name, createdAt: Date.now() }, v);
-    var btn = $('add-btn');
-    btn.disabled = true;
-    try {
-      await store.add(meal);
-      ['f-name', 'f-grams', 'f-carbs', 'f-protein', 'f-fat', 'f-kcal'].forEach(function (id) { $(id).value = ''; });
-      $('f-slot').value = guessSlot();
-      updatePreview();
-      $('f-name').focus();
-    } catch (err) {
-      msg.textContent = 'Non sono riuscito a salvare l’alimento. Riprova.';
-    }
-    btn.disabled = false;
-  }
-
-  function guessSlot() {
-    var h = new Date().getHours();
-    if (h < 10) return 'colazione';
-    if (h < 12) return 'spuntino';
-    if (h < 15) return 'pranzo';
-    if (h < 18) return 'spuntino';
-    return 'cena';
-  }
-
-  /* ---------- Obiettivi ---------- */
-  var T_IDS = [['on', 'carbs'], ['on', 'protein'], ['on', 'fat'], ['off', 'carbs'], ['off', 'protein'], ['off', 'fat']];
-  function fillTargets() {
-    T_IDS.forEach(function (x) { $('t-' + x[0] + '-' + x[1]).value = String(state.presets[x[0]][x[1]]).replace('.', ','); });
-    updateTargetHint();
-  }
-  function updateTargetHint() {
-    ['on', 'off'].forEach(function (m) {
-      var c = num($('t-' + m + '-carbs').value), p = num($('t-' + m + '-protein').value), f = num($('t-' + m + '-fat').value);
-      $('t-' + m + '-hint').textContent = 'Obiettivo ' + (m === 'on' ? 'ON' : 'OFF') + ': ' + nf(kcalFromMacros(c, p, f)) + ' kcal';
-    });
-  }
-  async function onSaveTargets() {
-    var m = $('t-msg');
-    var presets = { on: {}, off: {} };
-    var ok = true;
-    T_IDS.forEach(function (x) {
-      var v = num($('t-' + x[0] + '-' + x[1]).value);
-      if (!(v > 0)) ok = false;
-      presets[x[0]][x[1]] = v;
-    });
-    if (!ok) { m.style.color = 'var(--warn)'; m.textContent = 'Inserisci un valore maggiore di zero per ogni macro.'; return; }
-    try {
-      await store.saveSettings({ presets: presets, modes: state.modes });
-      m.style.color = 'var(--muted)'; m.textContent = 'Obiettivi salvati.';
-    } catch (err) {
-      m.style.color = 'var(--warn)'; m.textContent = 'Non sono riuscito a salvare gli obiettivi.';
-    }
-  }
-
-  /* ---------- Salvataggio sul telefono ---------- */
-  function localStore() {
-    var KEY = 'bellottrack-food-fit-v1';
-    function read() {
-      try {
-        var raw = localStorage.getItem(KEY);
-        var d = raw ? JSON.parse(raw) : null;
-        return { meals: d && Array.isArray(d.meals) ? d.meals : [], settings: d && d.settings ? d.settings : null };
-      } catch (e) { return { meals: [], settings: null }; }
-    }
-    var mem = read();
-    function write() { try { localStorage.setItem(KEY, JSON.stringify(mem)); } catch (e) {} }
-    var cb = null;
-    return {
-      watch: function (onMeals, onSettings) { cb = { m: onMeals, s: onSettings }; onMeals(mem.meals.slice()); onSettings(mem.settings); },
-      add: function (m) { mem.meals.push(m); write(); cb.m(mem.meals.slice()); return Promise.resolve(); },
-      update: function (id, patch) {
-        mem.meals = mem.meals.map(function (x) { return x.id === id ? Object.assign({}, x, patch) : x; });
-        write(); cb.m(mem.meals.slice()); return Promise.resolve();
-      },
-      remove: function (id) { mem.meals = mem.meals.filter(function (x) { return x.id !== id; }); write(); cb.m(mem.meals.slice()); return Promise.resolve(); },
-      saveSettings: function (st) { mem.settings = st; write(); cb.s(st); return Promise.resolve(); }
-    };
-  }
-  function applySettings(st) {
-    var presets = JSON.parse(JSON.stringify(DEFAULTS));
-    if (st && st.presets) {
-      ['on', 'off'].forEach(function (m) {
-        ['carbs', 'protein', 'fat'].forEach(function (k) {
-          var v = st.presets[m] && st.presets[m][k];
-          if (v > 0) presets[m][k] = v;
-        });
-      });
-    }
-    state.presets = presets;
-    state.modes = (st && st.modes) || {};
-    if (!$('targets-box').open) fillTargets();
-    render();
-  }
-  function onMeals(list) {
-    state.meals = list;
-    if (!loaded) { loaded = true; $('sync').textContent = 'Salvato su questo telefono'; }
-    render();
-  }
-
-  /* ---------- Prodotti: dati, ricerca e scheda ---------- */
-  function parseProduct(code, pr) {
-    var n = pr.nutriments || {};
-    function g(k) { var v = n[k]; if (v === undefined || v === null || v === '') return null; v = Number(v); return isFinite(v) && v >= 0 ? v : null; }
-    var kcal = g('energy-kcal_100g');
-    if (kcal === null) { var kj = g('energy_100g'); if (kj !== null) kcal = kj / 4.184; }
-    var serving = Number(pr.serving_quantity);
-    var nm = pr.product_name_it || pr.product_name || pr.generic_name || '';
-    return {
-      code: code, hasName: !!String(nm).trim(),
-      name: String(nm).trim() || ('Prodotto ' + code),
-      brand: pr.brands ? String(pr.brands).split(',')[0].trim() : '',
-      quantity: pr.quantity ? String(pr.quantity) : '',
-      kcal: kcal, carbs: g('carbohydrates_100g'), protein: g('proteins_100g'), fat: g('fat_100g'),
-      serving: isFinite(serving) && serving > 0 ? serving : 0,
-      allergens: (pr.allergens_tags || []).map(function (t) { return String(t).replace(/^[a-z]{2}:/, ''); })
-    };
-  }
-  function baseToProduct(b) {
-    return { code: '', generic: true, hasName: true, name: b.n, brand: '', quantity: '', kcal: kcalFromMacros(b.c, b.p, b.f),
-      carbs: b.c, protein: b.p, fat: b.f, serving: b.s || 0, allergens: b.a || [] };
-  }
-  function usable(p) { return p.hasName && (p.kcal !== null || p.carbs !== null || p.protein !== null || p.fat !== null); }
-  function cacheGet(code) { try { var c = JSON.parse(localStorage.getItem('dp-products') || '{}'); return c[code] || null; } catch (e) { return null; } }
-  function cachePut(code, p) {
-    try {
-      var c = JSON.parse(localStorage.getItem('dp-products') || '{}');
-      c[code] = p;
-      var keys = Object.keys(c);
-      if (keys.length > 200) delete c[keys[0]];
-      localStorage.setItem('dp-products', JSON.stringify(c));
-    } catch (e) {}
-  }
-
-  var searchCache = {};
-  var searchAbort = null;
-  var searchSeq = 0;
-
-  function localMatches(q) {
-    var toks = norm(q).split(/\s+/).filter(Boolean);
-    if (!toks.length) return [];
-    return BASE.filter(function (b) { var n = norm(b.n); return toks.every(function (t) { return n.indexOf(t) !== -1; }); }).slice(0, 8).map(baseToProduct);
-  }
-
-  function resItem(p) {
-    var li = document.createElement('li');
-    var b = document.createElement('button'); b.type = 'button'; b.className = 'res';
-    var rn = document.createElement('span'); rn.className = 'rn'; rn.textContent = p.name;
-    b.appendChild(rn);
-    var sub = p.generic ? 'Alimento base' : [p.brand, p.quantity].filter(Boolean).join(' · ');
-    if (sub) { var rb = document.createElement('span'); rb.className = 'rb'; rb.textContent = sub; b.appendChild(rb); }
-    var rs = document.createElement('span'); rs.className = 'rs';
-    rs.textContent = 'Per 100 g: ' + (p.kcal === null ? '?' : nf(p.kcal)) + ' kcal · C ' + fmtN(p.carbs) + ' · P ' + fmtN(p.protein) + ' · G ' + fmtN(p.fat);
-    b.appendChild(rs);
-    b.addEventListener('click', function () {
-      $('results').textContent = ''; $('search-status').textContent = '';
-      showProduct(p);
-    });
-    li.appendChild(b);
-    return li;
-  }
-
-  function renderResults(local, remote) {
-    var box = $('results');
-    box.textContent = '';
-    function section(title, arr) {
-      if (!arr || !arr.length) return;
-      var h = document.createElement('div'); h.className = 'reshead'; h.textContent = title; box.appendChild(h);
-      var ul = document.createElement('ul'); ul.className = 'results';
-      arr.forEach(function (p) { ul.appendChild(resItem(p)); });
-      box.appendChild(ul);
-    }
-    section('Alimenti base', local);
-    section('Database mondiale', remote);
-  }
-
-  async function remoteSearch(q) {
-    if (searchAbort) { try { searchAbort.abort(); } catch (e) {} }
-    searchAbort = typeof AbortController !== 'undefined' ? new AbortController() : null;
-    var url = 'https://world.openfoodfacts.org/cgi/search.pl?search_terms=' + encodeURIComponent(q) +
-      '&search_simple=1&action=process&json=1&page_size=24&sort_by=unique_scans_n' +
-      '&fields=code,product_name,product_name_it,generic_name,brands,quantity,serving_quantity,nutriments,allergens_tags';
-    var res = await fetch(url, { headers: { 'Accept': 'application/json' }, signal: searchAbort ? searchAbort.signal : undefined });
-    if (res.status === 429 || res.status === 503) throw new Error('busy');
-    if (!res.ok) throw new Error('http');
-    var data = await res.json();
-    return (data.products || []).map(function (pr) { return parseProduct(String(pr.code || ''), pr); }).filter(usable).slice(0, 20);
-  }
-
-  function onSearchInput() {
-    var q = $('q').value.trim();
-    $('search-status').textContent = '';
-    if (q.length < 2) { $('results').textContent = ''; return; }
-    renderResults(localMatches(q), searchCache[norm(q)] || null);
-  }
-
-  async function onSearchSubmit(e) {
-    e.preventDefault();
-    var q = $('q').value.trim();
-    var st = $('search-status');
-    $('scan-msg').textContent = '';
-    if (q.length < 2) { st.textContent = 'Scrivi almeno 2 lettere.'; return; }
-    var local = localMatches(q);
-    var key = norm(q);
-    if (searchCache[key]) { renderResults(local, searchCache[key]); st.textContent = searchCache[key].length || local.length ? '' : 'Nessun risultato. Inserisci i valori a mano più sotto.'; return; }
-    renderResults(local, null);
-    st.textContent = 'Cerco nel database mondiale…';
-    var seq = ++searchSeq;
-    try {
-      var remote = await remoteSearch(q);
-      if (seq !== searchSeq) return;
-      searchCache[key] = remote;
-      renderResults(local, remote);
-      st.textContent = remote.length || local.length ? '' : 'Nessun risultato. Prova con meno parole oppure inserisci i valori a mano più sotto.';
-    } catch (err) {
-      if (seq !== searchSeq || (err && err.name === 'AbortError')) return;
-      st.textContent = err && err.message === 'busy'
-        ? 'Il database è occupato. Riprova tra un minuto.'
-        : 'Non riesco a contattare il database mondiale. Controlla la connessione.';
-    }
-  }
-
-  function notFound() {
-    $('product').hidden = true; product = null;
-    $('scan-msg').textContent = 'Prodotto non trovato nel database Open Food Facts. Inserisci i valori a mano qui sotto.';
-    $('f-name').focus();
-  }
-  async function lookup(code) {
-    code = String(code || '').replace(/\D/g, '');
-    var msg = $('scan-msg');
-    if (code.length < 8) { msg.textContent = 'Il codice a barre ha almeno 8 cifre.'; return; }
-    msg.textContent = 'Cerco il prodotto…';
-    $('product').hidden = true;
-    var p = null;
-    try {
-      var url = 'https://world.openfoodfacts.org/api/v2/product/' + encodeURIComponent(code) +
-        '.json?fields=code,product_name,product_name_it,generic_name,brands,quantity,serving_quantity,nutriments,allergens_tags';
-      var res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-      if (res.status === 404) { notFound(); return; }
-      if (!res.ok) throw new Error('http');
-      var data = await res.json();
-      if (!data || data.status !== 1 || !data.product) { notFound(); return; }
-      p = parseProduct(code, data.product);
-      cachePut(code, p);
-    } catch (e) {
-      p = cacheGet(code);
-      if (!p) { msg.textContent = 'Non riesco a contattare il database. Controlla la connessione e riprova.'; return; }
-    }
-    msg.textContent = '';
-    showProduct(p);
-  }
-
-  function showProduct(p) {
-    product = p;
-    $('p-name').textContent = p.name;
-    $('p-brand').textContent = p.generic ? 'Alimento base · valori medi indicativi' : [p.brand, p.quantity].filter(Boolean).join(' · ');
-    $('p-100').textContent = 'Ogni 100 g: ' + (p.kcal === null ? '?' : nf(p.kcal)) + ' kcal · C ' + fmtN(p.carbs) + ' g · P ' + fmtN(p.protein) + ' g · G ' + fmtN(p.fat) + ' g';
-    var al = p.allergens.map(function (a) { return ALLERGENS[a] || a; });
-    var box = $('p-allerg');
-    box.textContent = al.length ? 'Allergeni indicati: ' + al.join(', ') : 'Nessun allergene indicato nei dati.';
-    var small = document.createElement('small');
-    small.textContent = p.generic ? 'Sono valori medi: i prodotti reali possono variare.' : 'I dati sono inseriti dagli utenti: controlla sempre l’etichetta.';
-    box.appendChild(small);
-    $('p-grams').value = String(p.serving || 100).replace('.', ',');
-    $('product').hidden = false;
-    updateProductCalc();
-    $('product').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-  }
-
-  function productValues() {
-    var g = num($('p-grams').value);
-    var c = product.carbs || 0, pr = product.protein || 0, f = product.fat || 0;
-    var k = product.kcal !== null ? product.kcal : kcalFromMacros(c, pr, f);
-    var x = g / 100;
-    return {
-      grams: round1(g),
-      per100: { carbs: round2(c), protein: round2(pr), fat: round2(f), kcal: round2(k) },
-      carbs: round1(c * x), protein: round1(pr * x), fat: round1(f * x), kcal: Math.round(k * x)
-    };
-  }
-  function updateProductCalc() {
-    if (!product) return;
-    var v = productValues();
-    var calc = $('p-calc');
-    calc.textContent = nf(v.kcal) + ' kcal';
-    var sp = document.createElement('span');
-    sp.textContent = 'C ' + fmt1(v.carbs) + ' · P ' + fmt1(v.protein) + ' · G ' + fmt1(v.fat);
-    calc.appendChild(sp);
-    var missing = product.carbs === null || product.protein === null || product.fat === null;
-    $('p-note').textContent = (missing ? 'Alcuni valori mancano nel database: controllali sull’etichetta. ' : '') +
-      'Si aggiunge come ' + $('f-slot').value + ' al giorno selezionato (' + fmtLong(state.date) + '). Il peso si può cambiare anche dopo, dall’elenco.';
-  }
-  async function addProduct() {
-    if (!product) return;
-    var v = productValues();
-    if (!(v.grams > 0)) { $('scan-msg').textContent = 'Inserisci il peso in grammi.'; return; }
-    var meal = Object.assign({
-      id: newId(), date: state.date, slot: $('f-slot').value,
-      name: (product.name + (product.brand && !product.generic ? ' (' + product.brand + ')' : '')).slice(0, 120),
-      createdAt: Date.now()
-    }, v);
-    if (product.code) meal.barcode = product.code;
-    try {
-      await store.add(meal);
-      $('scan-msg').style.color = 'var(--muted)';
-      $('scan-msg').textContent = 'Aggiunto: ' + meal.name + ' · ' + fmt1(v.grams) + ' g';
-      $('product').hidden = true; $('f-code').value = ''; product = null;
-    } catch (e) {
-      $('scan-msg').style.color = 'var(--warn)';
-      $('scan-msg').textContent = 'Non sono riuscito a salvare l’alimento. Riprova.';
-    }
-  }
-  function fillFromProduct() {
-    if (!product) return;
-    var v = productValues();
-    $('f-name').value = (product.name + (product.brand && !product.generic ? ' (' + product.brand + ')' : '')).slice(0, 120);
-    $('f-basis').value = 'per100';
-    $('f-grams').value = String(v.grams).replace('.', ',');
-    function s(x) { return x ? String(x).replace('.', ',') : ''; }
-    $('f-carbs').value = s(v.per100.carbs); $('f-protein').value = s(v.per100.protein); $('f-fat').value = s(v.per100.fat);
-    $('f-kcal').value = v.per100.kcal > 0 ? String(Math.round(v.per100.kcal)) : '';
-    updatePreview();
-    $('product').hidden = true; product = null;
-    $('f-name').focus();
-  }
-
-  /* ---------- Scanner codice a barre ---------- */
-  var ZXING_URL = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
-  var scanState = { stream: null, reader: null, timer: null, active: false, handled: false };
-  function loadScript(src) {
-    return new Promise(function (resolve, reject) {
-      if (window.ZXing) { resolve(); return; }
-      var s = document.createElement('script');
-      s.src = src; s.onload = function () { resolve(); }; s.onerror = function () { reject(new Error('load')); };
-      document.head.appendChild(s);
-    });
-  }
-  function setScanStatus(t) { $('scan-status').textContent = t; }
-  function stopScanner() {
-    scanState.active = false;
-    clearInterval(scanState.timer); scanState.timer = null;
-    try { if (scanState.reader) scanState.reader.reset(); } catch (e) {}
-    scanState.reader = null;
-    if (scanState.stream) { scanState.stream.getTracks().forEach(function (t) { t.stop(); }); scanState.stream = null; }
-    var v = $('scan-video');
-    try { v.pause(); } catch (e) {}
-    v.srcObject = null;
-    $('scanner').hidden = true;
-  }
-  function onCode(raw) {
-    if (scanState.handled) return;
-    var code = String(raw || '').replace(/\D/g, '');
-    if (code.length < 8) return;
-    scanState.handled = true;
-    try { if (navigator.vibrate) navigator.vibrate(60); } catch (e) {}
-    stopScanner();
-    $('f-code').value = code;
-    lookup(code);
-  }
-  async function openScanner() {
-    $('scan-msg').textContent = '';
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      $('scan-msg').textContent = 'La fotocamera non è disponibile qui. Scrivi il codice a barre a mano.';
-      return;
-    }
-    scanState.handled = false; scanState.active = true;
-    $('scanner').hidden = false;
-    setScanStatus('Avvio della fotocamera…');
-    var video = $('scan-video');
-    try {
-      if ('BarcodeDetector' in window) {
-        var detector = new window.BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'] });
-        scanState.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
-        if (!scanState.active) { stopScanner(); return; }
-        video.srcObject = scanState.stream;
-        await video.play();
-        setScanStatus('Inquadra il codice a barre');
-        var busy = false;
-        scanState.timer = setInterval(async function () {
-          if (busy || !scanState.active) return;
-          busy = true;
-          try { var found = await detector.detect(video); if (found && found.length) onCode(found[0].rawValue); } catch (e) {}
-          busy = false;
-        }, 250);
-      } else {
-        await loadScript(ZXING_URL);
-        if (!scanState.active) return;
-        var Z = window.ZXing;
-        var hints = new Map();
-        hints.set(Z.DecodeHintType.POSSIBLE_FORMATS, [Z.BarcodeFormat.EAN_13, Z.BarcodeFormat.EAN_8, Z.BarcodeFormat.UPC_A, Z.BarcodeFormat.UPC_E]);
-        var reader = new Z.BrowserMultiFormatReader(hints, 250);
-        scanState.reader = reader;
-        await reader.decodeFromConstraints({ video: { facingMode: { ideal: 'environment' } }, audio: false }, video,
-          function (result) { if (result) onCode(result.getText()); });
-        setScanStatus('Inquadra il codice a barre');
-      }
-    } catch (err) {
-      stopScanner();
-      var name = err && err.name, text;
-      if (name === 'NotAllowedError' || name === 'SecurityError') text = 'Non ho il permesso di usare la fotocamera. Consentilo dalle impostazioni del browser, oppure scrivi il codice a mano.';
-      else if (err && err.message === 'load') text = 'La prima scansione richiede internet per scaricare lo scanner. Oppure scrivi il codice a mano.';
-      else text = 'Non riesco ad avviare lo scanner. Scrivi il codice a barre a mano.';
-      $('scan-msg').textContent = text;
-    }
-  }
-
-  /* ---------- Installazione, backup, service worker ---------- */
-  var deferredPrompt = null;
-  function isStandalone() {
-    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
-  }
-  function setupInstall() {
-    if (isStandalone()) return;
-    var box = $('install'), btn = $('install-btn');
-    window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferredPrompt = e; box.hidden = false; btn.hidden = false; });
-    btn.addEventListener('click', async function () {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      try { await deferredPrompt.userChoice; } catch (e) {}
-      deferredPrompt = null; box.hidden = true;
-    });
-    window.addEventListener('appinstalled', function () { box.hidden = true; });
-    var ua = navigator.userAgent || '';
-    var ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    if (ios) { $('install-text').textContent = 'Per installare l’app: tocca Condividi in Safari, poi «Aggiungi alla schermata Home».'; box.hidden = false; }
-  }
-  function setupBackup() {
-    $('bk-export').addEventListener('click', function () {
-      var payload = { app: 'bellottrack-food-fit', version: 2, exportedAt: new Date().toISOString(), meals: state.meals, settings: { presets: state.presets, modes: state.modes } };
-      var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'bellottrack-food-fit-' + todayStr() + '.json';
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
-      $('bk-msg').textContent = 'Backup esportato.';
-    });
-    $('bk-import').addEventListener('click', function () { $('bk-file').click(); });
-    $('bk-file').addEventListener('change', function () {
-      var input = this;
-      var file = input.files && input.files[0];
-      if (!file) return;
-      var r = new FileReader();
-      r.onload = function () {
-        try {
-          var d = JSON.parse(r.result);
-          if (!d || !Array.isArray(d.meals)) throw new Error('bad');
-          var have = {};
-          state.meals.forEach(function (m) { have[m.id] = 1; });
-          var jobs = [], added = 0;
-          d.meals.forEach(function (m) {
-            if (m && m.id && typeof m.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(m.date) && !have[m.id]) { jobs.push(store.add(m)); added++; }
-          });
-          Promise.all(jobs).then(function () {
-            if (d.settings) store.saveSettings(d.settings);
-            $('bk-msg').textContent = 'Importati ' + added + ' alimenti.';
-          });
-        } catch (e) { $('bk-msg').textContent = 'File non valido.'; }
-      };
-      r.readAsText(file);
-      input.value = '';
-    });
-  }
-  function registerSW() {
-    if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-      window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
-    }
-  }
-
-  /* ---------- Avvio ---------- */
-  $('f-slot').value = guessSlot();
-  $('prev').addEventListener('click', function () { state.date = addDays(state.date, -1); render(); });
-  $('next').addEventListener('click', function () { state.date = addDays(state.date, 1); render(); });
-  $('today').addEventListener('click', function () { state.date = todayStr(); render(); });
-  $('mode-on').addEventListener('click', function () { setMode('on'); });
-  $('mode-off').addEventListener('click', function () { setMode('off'); });
-  $('meal-form').addEventListener('submit', onSubmit);
-  ['f-grams', 'f-carbs', 'f-protein', 'f-fat', 'f-kcal'].forEach(function (id) { $(id).addEventListener('input', updatePreview); });
-  $('f-basis').addEventListener('change', updatePreview);
-  T_IDS.forEach(function (x) { $('t-' + x[0] + '-' + x[1]).addEventListener('input', updateTargetHint); });
-  $('t-save').addEventListener('click', onSaveTargets);
-  $('search-form').addEventListener('submit', onSearchSubmit);
-  $('q').addEventListener('input', onSearchInput);
-  $('scan-btn').addEventListener('click', openScanner);
-  $('scan-close').addEventListener('click', stopScanner);
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && scanState.active) stopScanner(); });
-  $('code-go').addEventListener('click', function () { lookup($('f-code').value); });
-  $('f-code').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); lookup($('f-code').value); } });
-  $('p-grams').addEventListener('input', updateProductCalc);
-  $('f-slot').addEventListener('change', updateProductCalc);
-  $('p-add').addEventListener('click', addProduct);
-  $('p-fill').addEventListener('click', fillFromProduct);
-  fillTargets();
-  render();
-
-  store = localStore();
-  store.watch(onMeals, applySettings);
-  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
-  setupInstall();
-  setupBackup();
-  registerSW();
-})();
-</script>
+<script src="firebase-config.js"></script>
+<script src="app.js"></script>
+<script src="extras.js"></script>
 </body>
 </html>

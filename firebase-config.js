@@ -9,6 +9,6 @@ window.BELLOTTRACK_CLOUD = {
     appId: "1:1028193743073:web:982df8f055dadb647307a0"
   },
   appCheckKey: "6LcgCg8uAAAAAJ6Umi8RtKsyizPNC-XhE6ezY5mV",
-  aiModel: "gemini-3.8-flash",
+  aiModel: "gemini-3.5-flash-lite",
   contact: ""
 };

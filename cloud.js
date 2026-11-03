@@ -51,15 +51,21 @@ export async function initCloud(cfg) {
     },
 
     async ask(prompt) {
-      const { getAI, getGenerativeModel, GoogleAIBackend } = await import('https://www.gstatic.com/firebasejs/12.19.0/firebase-ai.js');
+      const { getAI, getGenerativeModel, GoogleAIBackend, ThinkingLevel } = await import('https://www.gstatic.com/firebasejs/12.19.0/firebase-ai.js');
       if (!ai) ai = getAI(app, { backend: new GoogleAIBackend() });
       // Se il modello e' sovraccarico, prova il successivo dell'elenco.
-      const names = [cfg.aiModel || 'gemini-3.8-flash'].concat(cfg.aiFallback || ['gemini-3.5-flash', 'gemini-3.5-flash-lite']);
+      const names = [cfg.aiModel || 'gemini-3.5-flash-lite'].concat(cfg.aiFallback || ['gemini-3.5-flash', 'gemini-3.8-flash']);
       let last;
       for (const name of names) {
         try {
           if (!models[name]) {
-            models[name] = getGenerativeModel(ai, { model: name, generationConfig: { responseMimeType: 'application/json', maxOutputTokens: 4096 } });
+            // Meno "ragionamento" = risposte molto piu' veloci.
+            const generationConfig = { responseMimeType: 'application/json', maxOutputTokens: 4096 };
+            if (ThinkingLevel && !/lite/.test(name)) {
+              const lv = /3\.(5|6)-flash$/.test(name) ? ThinkingLevel.MINIMAL : ThinkingLevel.LOW;
+              if (lv) generationConfig.thinkingConfig = { thinkingLevel: lv };
+            }
+            models[name] = getGenerativeModel(ai, { model: name, generationConfig });
           }
           const r = await models[name].generateContent(prompt);
           return r.response.text();

@@ -210,43 +210,115 @@
     }).catch(function () { $('msg').textContent = 'Non sono riuscito a cambiare il peso. Riprova.'; });
   }
 
-  function renderMeals(list) {
-    var ul = $('meals');
-    ul.textContent = '';
-    $('empty').hidden = list.length > 0;
-    list.forEach(function (m) {
-      var li = document.createElement('li'); li.className = 'meal';
-      var title = document.createElement('div'); title.className = 'title';
-      var slot = document.createElement('span'); slot.className = 'slot'; slot.textContent = m.slot || 'pasto';
-      title.appendChild(slot);
-      title.appendChild(document.createTextNode(m.name || ''));
-      var kc = document.createElement('div'); kc.className = 'kc'; kc.textContent = nf(kcalOf(m)) + ' kcal';
-      var mac = document.createElement('div'); mac.className = 'mac';
-      [['C', m.carbs], ['P', m.protein], ['G', m.fat]].forEach(function (x) {
-        var s = document.createElement('span'); s.textContent = x[0] + ' ' + fmt1(x[1] || 0) + ' g'; mac.appendChild(s);
-      });
-      var tools = document.createElement('div'); tools.className = 'tools';
-      if (m.per100 && m.grams > 0) {
-        var lab = document.createElement('label'); lab.className = 'wg';
-        lab.appendChild(document.createTextNode('Peso'));
-        var inp = document.createElement('input');
-        inp.type = 'text'; inp.inputMode = 'decimal'; inp.value = String(m.grams).replace('.', ',');
-        inp.setAttribute('aria-label', 'Peso in grammi di ' + (m.name || 'alimento'));
-        inp.addEventListener('change', function () { onWeightChange(m, inp); });
-        lab.appendChild(inp);
-        lab.appendChild(document.createTextNode('g'));
-        tools.appendChild(lab);
-      } else {
-        tools.appendChild(document.createElement('span'));
-      }
-      var del = document.createElement('button');
-      del.type = 'button'; del.className = 'del'; del.textContent = 'Elimina';
-      del.setAttribute('aria-label', 'Elimina ' + (m.name || 'alimento'));
-      del.addEventListener('click', function () { onDelete(del, m); });
-      tools.appendChild(del);
-      li.appendChild(title); li.appendChild(kc); li.appendChild(mac); li.appendChild(tools);
-      ul.appendChild(li);
+  var SECTIONS = [
+    { key: 'colazione', label: 'Colazione', sub: '' },
+    { key: 'spuntino-1', label: 'Spuntino / Snack', sub: 'mattina' },
+    { key: 'pranzo', label: 'Pranzo', sub: '' },
+    { key: 'pre-allenamento', label: 'Pre-allenamento', sub: '' },
+    { key: 'post-allenamento', label: 'Post-allenamento', sub: '' },
+    { key: 'spuntino-2', label: 'Spuntino / Snack', sub: 'pomeriggio' },
+    { key: 'cena', label: 'Cena', sub: '' },
+    { key: 'pre-nanna', label: 'Pre-nanna', sub: '' }
+  ];
+  /* I pasti salvati con il vecchio nome «spuntino» finiscono nello spuntino piu' vicino all'orario. */
+  var TRAIN_ONLY = { 'pre-allenamento': 1, 'post-allenamento': 1 };
+  function sectionOf(m) {
+    var s = m.slot, i;
+    for (i = 0; i < SECTIONS.length; i++) if (SECTIONS[i].key === s) return s;
+    var h = new Date(m.createdAt || 0).getHours();
+    return h < 15 ? 'spuntino-1' : 'spuntino-2';
+  }
+  function slotLabel(key) {
+    for (var i = 0; i < SECTIONS.length; i++) {
+      if (SECTIONS[i].key === key) return SECTIONS[i].label + (SECTIONS[i].sub ? ' (' + SECTIONS[i].sub + ')' : '');
+    }
+    return key;
+  }
+
+  function buildMeal(m) {
+    var li = document.createElement('li'); li.className = 'meal';
+    var title = document.createElement('div'); title.className = 'title';
+    title.appendChild(document.createTextNode(m.name || ''));
+    var kc = document.createElement('div'); kc.className = 'kc'; kc.textContent = nf(kcalOf(m)) + ' kcal';
+    var mac = document.createElement('div'); mac.className = 'mac';
+    [['C', m.carbs], ['P', m.protein], ['G', m.fat]].forEach(function (x) {
+      var s = document.createElement('span'); s.textContent = x[0] + ' ' + fmt1(x[1] || 0) + ' g'; mac.appendChild(s);
     });
+    var tools = document.createElement('div'); tools.className = 'tools';
+    if (m.per100 && m.grams > 0) {
+      var lab = document.createElement('label'); lab.className = 'wg';
+      lab.appendChild(document.createTextNode('Peso'));
+      var inp = document.createElement('input');
+      inp.type = 'text'; inp.inputMode = 'decimal'; inp.value = String(m.grams).replace('.', ',');
+      inp.setAttribute('aria-label', 'Peso in grammi di ' + (m.name || 'alimento'));
+      inp.addEventListener('change', function () { onWeightChange(m, inp); });
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode('g'));
+      tools.appendChild(lab);
+    } else {
+      tools.appendChild(document.createElement('span'));
+    }
+    var del = document.createElement('button');
+    del.type = 'button'; del.className = 'del'; del.textContent = 'Elimina';
+    del.setAttribute('aria-label', 'Elimina ' + (m.name || 'alimento'));
+    del.addEventListener('click', function () { onDelete(del, m); });
+    tools.appendChild(del);
+    li.appendChild(title); li.appendChild(kc); li.appendChild(mac); li.appendChild(tools);
+    return li;
+  }
+
+  function renderMeals(list) {
+    var box = $('sections');
+    box.textContent = '';
+    SECTIONS.forEach(function (sec) {
+      var items = list.filter(function (m) { return sectionOf(m) === sec.key; });
+      // Pre e post allenamento compaiono solo nei giorni ON (o se contengono gia' degli alimenti).
+      if (TRAIN_ONLY[sec.key] && modeOf(state.date) !== 'on' && !items.length) return;
+      var t = totalsOf(items);
+      var card = document.createElement('section'); card.className = 'card msec';
+      card.setAttribute('data-slot', sec.key);
+      var head = document.createElement('div'); head.className = 'mhead';
+      var h2 = document.createElement('h2'); h2.appendChild(document.createTextNode(sec.label));
+      if (sec.sub) { var sub = document.createElement('span'); sub.className = 'msub'; sub.textContent = sec.sub; h2.appendChild(sub); }
+      var sum = document.createElement('div'); sum.className = 'msum';
+      sum.textContent = items.length ? nf(t.kcal) + ' kcal · C ' + fmt1(t.carbs) + ' · P ' + fmt1(t.protein) + ' · G ' + fmt1(t.fat) : 'Nessun alimento';
+      var add = document.createElement('button'); add.type = 'button'; add.className = 'addbtn';
+      add.setAttribute('aria-label', 'Aggiungi a ' + slotLabel(sec.key));
+      add.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>';
+      add.addEventListener('click', function () { openSheet(sec.key); });
+      head.appendChild(h2); head.appendChild(add); head.appendChild(sum);
+      card.appendChild(head);
+      if (items.length) {
+        var ul = document.createElement('ul'); ul.className = 'meals';
+        items.forEach(function (m) { ul.appendChild(buildMeal(m)); });
+        card.appendChild(ul);
+      }
+      box.appendChild(card);
+    });
+  }
+
+  /* ---------- Finestra "Aggiungi" ---------- */
+  var sheetFrom = null;
+  function openSheet(slot) {
+    $('f-slot').value = slot;
+    $('add-title').textContent = 'Aggiungi a ' + slotLabel(slot);
+    sheetFrom = document.activeElement;
+    $('sheet').hidden = false;
+    document.body.classList.add('noscroll');
+    updateProductCalc();
+    $('sheet-x').focus();
+  }
+  function closeSheet() {
+    if ($('sheet').hidden) return;
+    $('sheet').hidden = true;
+    document.body.classList.remove('noscroll');
+    if (sheetFrom && sheetFrom.focus) { try { sheetFrom.focus(); } catch (e) {} }
+  }
+  function afterAdd(meal) {
+    $('results').textContent = '';
+    $('search-status').textContent = '';
+    closeSheet();
+    toast('Aggiunto a ' + slotLabel(sectionOf(meal)) + ': ' + (meal.name || ''));
   }
 
   function renderRecent() {
@@ -273,7 +345,6 @@
   function fillFormFromMeal(m) {
     function s(v) { return v ? String(v).replace('.', ',') : ''; }
     $('f-name').value = m.name;
-    if (m.slot) $('f-slot').value = m.slot;
     if (m.per100) {
       $('f-basis').value = 'per100';
       $('f-grams').value = s(m.grams);
@@ -365,9 +436,8 @@
     try {
       await store.add(meal);
       ['f-name', 'f-grams', 'f-carbs', 'f-protein', 'f-fat', 'f-kcal'].forEach(function (id) { $(id).value = ''; });
-      $('f-slot').value = guessSlot();
       updatePreview();
-      $('f-name').focus();
+      afterAdd(meal);
     } catch (err) {
       msg.textContent = 'Non sono riuscito a salvare l’alimento. Riprova.';
     }
@@ -377,10 +447,11 @@
   function guessSlot() {
     var h = new Date().getHours();
     if (h < 10) return 'colazione';
-    if (h < 12) return 'spuntino';
+    if (h < 12) return 'spuntino-1';
     if (h < 15) return 'pranzo';
-    if (h < 18) return 'spuntino';
-    return 'cena';
+    if (h < 18) return 'spuntino-2';
+    if (h < 22) return 'cena';
+    return 'pre-nanna';
   }
 
   /* ---------- Obiettivi ---------- */
@@ -683,7 +754,7 @@
     calc.appendChild(sp);
     var missing = product.carbs === null || product.protein === null || product.fat === null;
     $('p-note').textContent = (missing ? 'Alcuni valori mancano nel database: controllali sull’etichetta. ' : '') +
-      'Si aggiunge come ' + $('f-slot').value + ' al giorno selezionato (' + fmtLong(state.date) + '). Il peso si può cambiare anche dopo, dall’elenco.';
+      'Si aggiunge a ' + slotLabel($('f-slot').value) + ' del giorno selezionato (' + fmtLong(state.date) + '). Il peso si può cambiare anche dopo, dall’elenco.';
   }
   async function addProduct() {
     if (!product) return;
@@ -697,9 +768,9 @@
     if (product.code) meal.barcode = product.code;
     try {
       await store.add(meal);
-      $('scan-msg').style.color = 'var(--muted)';
-      $('scan-msg').textContent = 'Aggiunto: ' + meal.name + ' · ' + fmt1(v.grams) + ' g';
+      $('scan-msg').textContent = '';
       $('product').hidden = true; $('f-code').value = ''; product = null;
+      afterAdd(meal);
     } catch (e) {
       $('scan-msg').style.color = 'var(--warn)';
       $('scan-msg').textContent = 'Non sono riuscito a salvare l’alimento. Riprova.';
@@ -877,6 +948,9 @@
 
   /* ---------- Avvio ---------- */
   $('f-slot').value = guessSlot();
+  $('sheet-x').addEventListener('click', closeSheet);
+  $('sheet-back').addEventListener('click', closeSheet);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && $('scanner').hidden) closeSheet(); });
   $('prev').addEventListener('click', function () { state.date = addDays(state.date, -1); render(); });
   $('next').addEventListener('click', function () { state.date = addDays(state.date, 1); render(); });
   $('today').addEventListener('click', function () { state.date = todayStr(); render(); });
@@ -945,7 +1019,7 @@
     todayStr: todayStr, addDays: addDays, toDate: toDate, fmtLong: fmtLong, newId: newId,
     kcalFromMacros: kcalFromMacros, kcalOf: kcalOf, dayMeals: dayMeals, totalsOf: totalsOf,
     targetsFor: targetsFor, modeOf: modeOf, targetKcal: targetKcal, BASE: BASE, DEFAULTS: DEFAULTS,
-    addMeal: function (m) { return store.add(m); },
+    addMeal: function (m) { return store.add(m); }, openSheet: openSheet, closeSheet: closeSheet, slotLabel: slotLabel, sectionOf: sectionOf, SECTIONS: SECTIONS,
     setSync: function (t) { $('sync').textContent = t; }
   };
   emit('render');

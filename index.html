@@ -297,7 +297,75 @@ body { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 .privacy p { margin: 0; }
 .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 @media (max-width: 380px) { .cols2 { grid-template-columns: 1fr; } .tab { font-size: 10px; letter-spacing: 0.02em; } }
+
+/* Tema chiaro (si attiva di giorno, oppure a mano dal Profilo) */
+:root { --tabbg: rgba(21,21,23,0.97); --note: #1b1810; --good: #5BD68A; }
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #F4F1EA; --surface: #FFFFFF; --raise: #F0ECE3; --line: #D9D3C7; --track: #E4DFD3;
+  --ink: #17171A; --muted: #5E5E66; --red: #C8171A; --red-deep: #8E1111; --gold: #A86A00;
+  --warn: #B3261E; --carbs: #A86A00; --protein: #C8171A; --fat: #0B7F73;
+  --tabbg: rgba(255,255,255,0.97); --note: #FFF4D6; --good: #1E7E48;
+}
+:root[data-theme="light"] input::placeholder { color: #8A8A92; }
+.hero { --ink: #F3F3F0; --muted: #C9C9CF; --gold: #F2B01E; color: #F3F3F0; }
+.bubble.me { color: #fff; }
+.tabbar { background: var(--tabbg); }
+.acard, .banner { background: var(--note); }
+.up { color: var(--good); }
+
+/* Sezioni dei pasti */
+.sections { display: flex; flex-direction: column; gap: 12px; }
+.msec { padding: 14px 16px; }
+.mhead { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 12px; }
+.mhead h2 { display: block; font-size: 19px; line-height: 1.15; min-width: 0; }
+.mhead .msub { display: block; font-family: var(--font-body); font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+.mhead .msum { grid-column: 1; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.addbtn { grid-column: 2; grid-row: 1 / span 2; width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--red); color: var(--on-red);
+  display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(200,23,26,0.35); }
+.addbtn svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 3; stroke-linecap: round; fill: none; }
+.msec .empty { margin: 8px 0 0; font-size: 14px; }
+.msec .meals { margin-top: 10px; }
+
+/* Finestra "Aggiungi" */
+.sheet { position: fixed; inset: 0; z-index: 45; display: flex; align-items: flex-end; justify-content: center; }
+.sheet-back { position: absolute; inset: 0; background: rgba(0,0,0,0.6); }
+.sheet-card { position: relative; width: 100%; max-width: 560px; max-height: 92vh; overflow-y: auto; overscroll-behavior: contain;
+  background: var(--surface); border: 1px solid var(--line); border-bottom: 0; border-radius: 16px 16px 0 0;
+  padding: 16px 16px calc(24px + env(safe-area-inset-bottom, 0px)); }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.sheet-head h2 { min-width: 0; overflow-wrap: anywhere; }
+.sheet-x { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--raise); font-size: 22px; line-height: 1; }
+body.noscroll { overflow: hidden; }
+.themebox { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
 </style>
+<script>
+(function () {
+  var K = 'bt-theme';
+  function cfg() {
+    try { var o = JSON.parse(localStorage.getItem(K) || 'null'); if (o && o.mode) return o; } catch (e) {}
+    return { mode: 'auto', from: '07:00', to: '19:00' };
+  }
+  function mins(s) { var p = String(s || '').split(':'); return (+p[0] || 0) * 60 + (+p[1] || 0); }
+  function resolve(c) {
+    if (c.mode === 'light' || c.mode === 'dark') return c.mode;
+    var d = new Date(), m = d.getHours() * 60 + d.getMinutes(), a = mins(c.from), b = mins(c.to);
+    var light = a < b ? (m >= a && m < b) : (m >= a || m < b);
+    return light ? 'light' : 'dark';
+  }
+  function apply() {
+    var t = resolve(cfg()), r = document.documentElement;
+    r.setAttribute('data-theme', t); r.style.colorScheme = t;
+    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', t === 'light' ? '#F4F1EA' : '#0B0B0C');
+    var c = document.querySelector('meta[name="color-scheme"]'); if (c) c.setAttribute('content', t);
+  }
+  window.BTTheme = { get: cfg, resolve: function () { return resolve(cfg()); }, apply: apply,
+    set: function (c) { try { localStorage.setItem(K, JSON.stringify(c)); } catch (e) {} apply(); } };
+  apply();
+  setInterval(apply, 60000);
+  document.addEventListener('visibilitychange', apply);
+})();
+</script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -372,8 +440,13 @@ body { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
     <div class="macros" id="macros"></div>
   </section>
 
-  <section class="card" aria-labelledby="add-h">
-    <h2 id="add-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-dumbbell"/></svg>Aggiungi alimento</h2>
+  <div class="sheet" id="sheet" hidden>
+  <div class="sheet-back" id="sheet-back"></div>
+  <section class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="add-h">
+    <div class="sheet-head">
+      <h2 id="add-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-dumbbell"/></svg><span id="add-title">Aggiungi alimento</span></h2>
+      <button class="sheet-x" id="sheet-x" type="button" aria-label="Chiudi">&times;</button>
+    </div>
 
     <form class="searchform" id="search-form" role="search" autocomplete="off">
       <input id="q" type="search" enterkeyhint="search" placeholder="Cerca alimento, pasto o marca" aria-label="Cerca alimento, pasto o marca" maxlength="80">
@@ -424,11 +497,13 @@ body { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
         <label for="f-slot">Pasto
           <select id="f-slot">
             <option value="colazione">Colazione</option>
-            <option value="spuntino">Spuntino</option>
+            <option value="spuntino-1">Spuntino / Snack (mattina)</option>
+            <option value="pranzo">Pranzo</option>
             <option value="pre-allenamento">Pre-allenamento</option>
             <option value="post-allenamento">Post-allenamento</option>
-            <option value="pranzo">Pranzo</option>
+            <option value="spuntino-2">Spuntino / Snack (pomeriggio)</option>
             <option value="cena">Cena</option>
+            <option value="pre-nanna">Pre-nanna</option>
           </select>
         </label>
       </div>
@@ -469,12 +544,9 @@ body { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
       <div class="recent" id="recent"></div>
     </div>
   </section>
+  </div>
 
-  <section class="card" aria-labelledby="list-h">
-    <h2 id="list-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-barbell"/></svg>Pasti del giorno</h2>
-    <ul class="meals" id="meals"></ul>
-    <p class="empty" id="empty">Nessun alimento registrato per questo giorno. Aggiungi il primo dal modulo qui sopra.</p>
-  </section>
+  <div class="sections" id="sections"></div>
 
   <section class="card" aria-labelledby="week-h">
     <h2 id="week-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-dumbbell"/></svg>Ultimi 7 giorni</h2>
@@ -654,6 +726,24 @@ body { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
       <p class="msg" id="bk-msg" role="status" style="color:var(--muted)"></p>
     </details>
   </section>
+
+    <section class="card" aria-labelledby="th-h">
+      <h2 id="th-h"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-dumbbell"/></svg>Aspetto</h2>
+      <div class="themebox">
+        <label for="th-mode">Tema
+          <select id="th-mode">
+            <option value="auto">Automatico, in base all’orario</option>
+            <option value="light">Sempre chiaro</option>
+            <option value="dark">Sempre scuro</option>
+          </select>
+        </label>
+        <div class="cols2" id="th-times">
+          <label for="th-from">Chiaro dalle<input id="th-from" type="time" value="07:00"></label>
+          <label for="th-to">Scuro dalle<input id="th-to" type="time" value="19:00"></label>
+        </div>
+        <p class="hintline" id="th-note"></p>
+      </div>
+    </section>
 
     <section class="card">
       <details>

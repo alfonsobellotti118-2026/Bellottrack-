@@ -1,5 +1,5 @@
 /* Service worker di Bellottrack food fit: tiene l'app disponibile anche senza connessione. */
-const VERSION = 'bellottrack-food-fit-v6';
+const VERSION = 'bellottrack-food-fit-v7';
 const SHELL = [
   './',
   'index.html',
@@ -40,7 +40,7 @@ self.addEventListener('fetch', (event) => {
   // File dell'app: prima la rete, così gli aggiornamenti arrivano subito; senza rete la copia salvata.
   if (url.origin === self.location.origin) {
     event.respondWith(
-      fetch(req).then((res) => {
+      fetch(req, { cache: 'no-cache' }).then((res) => {
         if (res && res.ok) {
           const copy = res.clone();
           caches.open(VERSION).then((cache) => cache.put(req, copy));

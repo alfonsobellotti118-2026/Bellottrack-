@@ -62,7 +62,9 @@
     { n: 'Carote', c: 7, p: 1, f: 0.2 }
   ];
 
-  var state = { meals: [], presets: JSON.parse(JSON.stringify(DEFAULTS)), modes: {}, profile: null, weights: [], goals: [], date: todayStr(), mealsReady: false, settingsReady: false };
+  var state = { meals: [], presets: JSON.parse(JSON.stringify(DEFAULTS)), modes: {}, profile: null, weights: [], goals: [], schedule: null, templates: [], favs: [], workouts: [], measures: [], daily: {}, suppList: null, waterGoal: 0, date: todayStr(), mealsReady: false, settingsReady: false };
+  var DEFAULT_SCHEDULE = { days: [1, 3, 5], since: '2026-11-05' };
+  var EXTRA_ARR = ['templates', 'favs', 'workouts', 'measures'];
   var listeners = {};
   function on(evt, fn) { (listeners[evt] = listeners[evt] || []).push(fn); }
   function emit(evt, a) { (listeners[evt] || []).slice().forEach(function (fn) { try { fn(a); } catch (e) { if (window.console) console.error(e); } }); }
@@ -89,7 +91,16 @@
   function fmtN(v) { return v === null || v === undefined ? '?' : fmt1(v); }
   function kcalFromMacros(c, p, f) { return Math.round(4 * c + 4 * p + 9 * f); }
   function kcalOf(m) { return m.kcal > 0 ? Math.round(m.kcal) : kcalFromMacros(m.carbs || 0, m.protein || 0, m.fat || 0); }
-  function modeOf(date) { return state.modes[date] === 'on' ? 'on' : 'off'; }
+  function scheduledOn(date) {
+    var sc = state.schedule || DEFAULT_SCHEDULE;
+    if (!sc.days || !sc.days.length || date < (sc.since || '0000')) return false;
+    return sc.days.indexOf(toDate(date).getDay()) >= 0;
+  }
+  function modeOf(date) {
+    var v = state.modes[date];
+    if (v === 'on' || v === 'off') return v;
+    return scheduledOn(date) ? 'on' : 'off';
+  }
   function targetsFor(date) { return state.presets[modeOf(date)]; }
   function targetKcal(date) { var t = targetsFor(date || state.date); return kcalFromMacros(t.carbs, t.protein, t.fat); }
   function newId() { return 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
@@ -235,6 +246,7 @@
     return key;
   }
 
+  function favKey(m) { return (m.name || '').toLowerCase() + '|' + (m.per100 ? JSON.stringify(m.per100) : m.carbs + '|' + m.protein + '|' + m.fat); }
   function buildMeal(m) {
     var li = document.createElement('li'); li.className = 'meal';
     var title = document.createElement('div'); title.className = 'title';
@@ -258,6 +270,12 @@
     } else {
       tools.appendChild(document.createElement('span'));
     }
+    var star = document.createElement('button');
+    star.type = 'button'; star.className = 'star'; star.textContent = '\u2605';
+    star.setAttribute('aria-label', 'Preferito: ' + (m.name || 'alimento'));
+    star.setAttribute('data-fav', favKey(m));
+    star.addEventListener('click', function () { emit('fav', m); });
+    tools.appendChild(star);
     var del = document.createElement('button');
     del.type = 'button'; del.className = 'del'; del.textContent = 'Elimina';
     del.setAttribute('aria-label', 'Elimina ' + (m.name || 'alimento'));
@@ -530,12 +548,19 @@
     state.profile = st.profile || null;
     state.weights = Array.isArray(st.weights) ? st.weights : [];
     state.goals = Array.isArray(st.goals) ? st.goals : [];
+    state.schedule = st.schedule && Array.isArray(st.schedule.days) ? st.schedule : null;
+    EXTRA_ARR.forEach(function (k) { state[k] = Array.isArray(st[k]) ? st[k] : []; });
+    state.daily = st.daily && typeof st.daily === 'object' ? st.daily : {};
+    state.suppList = Array.isArray(st.suppList) ? st.suppList : null;
+    state.waterGoal = st.waterGoal > 0 ? st.waterGoal : 0;
     state.settingsReady = true;
     if (!$('targets-box').open) fillTargets();
     render();
   }
   function composeSettings() {
-    return { presets: state.presets, modes: state.modes, profile: state.profile, weights: state.weights, goals: state.goals };
+    return { presets: state.presets, modes: state.modes, profile: state.profile, weights: state.weights, goals: state.goals,
+      schedule: state.schedule || DEFAULT_SCHEDULE, templates: state.templates, favs: state.favs, workouts: state.workouts, measures: state.measures,
+      daily: state.daily, suppList: state.suppList, waterGoal: state.waterGoal || 0 };
   }
   /* Cambia una parte delle impostazioni, la applica subito e la salva. */
   function patchSettings(patch) {
@@ -557,6 +582,7 @@
     store = next;
     state.meals = []; state.mealsReady = false; state.settingsReady = false;
     state.profile = null; state.weights = []; state.goals = []; state.modes = {};
+    state.schedule = null; state.templates = []; state.favs = []; state.workouts = []; state.measures = []; state.daily = {}; state.suppList = null; state.waterGoal = 0;
     state.presets = JSON.parse(JSON.stringify(DEFAULTS));
     $('sync').textContent = next.kind === 'cloud' ? 'Sincronizzazione…' : '';
     render();
@@ -1018,8 +1044,8 @@
     num: num, round1: round1, round2: round2, fmt1: fmt1, nf: nf, norm: norm,
     todayStr: todayStr, addDays: addDays, toDate: toDate, fmtLong: fmtLong, newId: newId,
     kcalFromMacros: kcalFromMacros, kcalOf: kcalOf, dayMeals: dayMeals, totalsOf: totalsOf,
-    targetsFor: targetsFor, modeOf: modeOf, targetKcal: targetKcal, BASE: BASE, DEFAULTS: DEFAULTS,
-    addMeal: function (m) { return store.add(m); }, openSheet: openSheet, closeSheet: closeSheet, slotLabel: slotLabel, sectionOf: sectionOf, SECTIONS: SECTIONS,
+    targetsFor: targetsFor, modeOf: modeOf, scheduledOn: scheduledOn, DEFAULT_SCHEDULE: DEFAULT_SCHEDULE, targetKcal: targetKcal, BASE: BASE, DEFAULTS: DEFAULTS,
+    addMeal: function (m) { return store.add(m); }, fillFormFromMeal: fillFormFromMeal, favKey: favKey, openSheet: openSheet, closeSheet: closeSheet, slotLabel: slotLabel, sectionOf: sectionOf, SECTIONS: SECTIONS,
     setSync: function (t) { $('sync').textContent = t; }
   };
   emit('render');

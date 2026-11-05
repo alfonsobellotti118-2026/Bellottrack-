@@ -339,6 +339,8 @@ body { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 body.noscroll { overflow: hidden; }
 .themebox { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
 </style>
+<script>try{if(localStorage.getItem('bt-lock')){document.documentElement.setAttribute('data-locked','1');setTimeout(function(){if(!document.getElementById('lock'))document.documentElement.removeAttribute('data-locked')},8000)}}catch(e){}</script>
+<style>html[data-locked] body>*:not(#lock){visibility:hidden}</style>
 <script>
 (function () {
   var K = 'bt-theme';

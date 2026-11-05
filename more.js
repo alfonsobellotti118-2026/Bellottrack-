@@ -54,7 +54,9 @@
     '.prl li b{overflow-wrap:anywhere}.pr{color:var(--gold)}' +
     '.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}' +
     '.igprev{width:100%;height:auto;border-radius:10px;border:1px solid var(--line);display:block}' +
-    '.mcard .pactions>button{min-height:44px}';
+    '.mcard .pactions>button{min-height:44px}' +
+    '#lock{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}#lock[hidden]{display:none}' +
+    '.lockbox{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;max-width:360px}.lockbox h1{margin:0}.lockbox p{margin:0;color:var(--muted)}';
   var st = el('style'); st.textContent = css; document.head.appendChild(st);
 
   /* ---------- Finestra generica ---------- */
@@ -600,9 +602,75 @@
     });
   }
 
+
+  /* ================= 7. Blocco con impronta o volto ================= */
+  var LK = 'bt-lock', lockEl = null, hiddenAt = 0, busy = false;
+  function lockId() { try { return localStorage.getItem(LK); } catch (e) { return null; } }
+  function b2s(buf) { var a = new Uint8Array(buf), s = ''; for (var i = 0; i < a.length; i++) s += String.fromCharCode(a[i]); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+  function s2b(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; var r = atob(s), a = new Uint8Array(r.length); for (var i = 0; i < r.length; i++) a[i] = r.charCodeAt(i); return a; }
+  function rnd(n) { var a = new Uint8Array(n); crypto.getRandomValues(a); return a; }
+  function canBio() { return !!(window.PublicKeyCredential && navigator.credentials && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) ? PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().catch(function () { return false; }) : Promise.resolve(false); }
+  function verify() {
+    var id = lockId(); if (!id) return Promise.resolve(true);
+    return navigator.credentials.get({ publicKey: { challenge: rnd(32), allowCredentials: [{ id: s2b(id), type: 'public-key' }], userVerification: 'required', timeout: 60000 } }).then(function () { return true; });
+  }
+  function hideLock() { document.documentElement.removeAttribute('data-locked'); if (lockEl) lockEl.hidden = true; }
+  function showLock() {
+    if (!lockId()) return;
+    document.documentElement.setAttribute('data-locked', '1');
+    if (!lockEl) {
+      lockEl = el('div'); lockEl.id = 'lock'; lockEl.setAttribute('role', 'dialog'); lockEl.setAttribute('aria-modal', 'true'); lockEl.setAttribute('aria-label', 'App bloccata');
+      lockEl.innerHTML = '<div class="lockbox"><svg class="ic" aria-hidden="true" focusable="false" style="width:72px;height:32px;color:var(--gold)"><use href="#i-barbell"/></svg><h1>Bellottrack <span class="fit">food fit</span></h1><p>App bloccata</p><button class="primary" id="lock-go" type="button">Sblocca con impronta o volto</button><p class="msg" id="lock-msg" role="alert"></p><button class="linkbtn" id="lock-help" type="button">Non riesco a sbloccare</button></div>';
+      document.body.appendChild(lockEl);
+      $('lock-go').addEventListener('click', tryUnlock);
+      $('lock-help').addEventListener('click', function () {
+        $('lock-msg').textContent = 'Se il telefono non riconosce più la tua impronta, sblocca prima il telefono con il suo codice. Per togliere il blocco serve poterlo verificare: se non è possibile, svuota i dati del sito dalle impostazioni di Chrome (i dati con account restano al sicuro online).';
+      });
+    }
+    lockEl.hidden = false; $('lock-msg').textContent = '';
+    setTimeout(tryUnlock, 150);
+  }
+  function tryUnlock() {
+    if (busy) return; busy = true;
+    verify().then(function () { busy = false; hideLock(); }).catch(function () { busy = false; var m = $('lock-msg'); if (m) m.textContent = 'Non riconosciuto. Tocca il pulsante per riprovare.'; });
+  }
+  function buildLockCard() {
+    var prof = document.querySelector('.view[data-view="profilo"]');
+    var card = el('section', 'card'); card.id = 'lock-card';
+    card.innerHTML = '<h2>Blocco con impronta o volto</h2><p class="hintline">All’apertura l’app chiede la tua impronta o il tuo volto, come il blocco del telefono. È un blocco di riservatezza contro chi prende il telefono per curiosare: la vera protezione resta il codice del telefono.</p><div class="pactions" style="margin-top:10px"><button class="secondary" type="button" id="lock-on"></button></div><p class="msg" id="lock-card-msg" role="status"></p>';
+    var cards = prof.querySelectorAll('section.card');
+    prof.insertBefore(card, cards[2] || null);
+    $('lock-on').addEventListener('click', toggleLock);
+    renderLockCard();
+    canBio().then(function (ok) { if (!ok && !lockId()) { $('lock-on').disabled = true; $('lock-card-msg').textContent = 'Su questo telefono non trovo un’impronta o un volto: attiva prima il blocco schermo con biometria nelle impostazioni di Android.'; } });
+  }
+  function renderLockCard() { var b = $('lock-on'); if (b) b.textContent = lockId() ? 'Disattiva il blocco' : 'Attiva il blocco'; }
+  function toggleLock() {
+    var msg = $('lock-card-msg'); msg.textContent = '';
+    if (lockId()) {
+      verify().then(function () { try { localStorage.removeItem(LK); } catch (e) {} renderLockCard(); msg.textContent = 'Blocco disattivato.'; }).catch(function () { msg.textContent = 'Verifica non riuscita: il blocco resta attivo.'; });
+      return;
+    }
+    canBio().then(function (ok) {
+      if (!ok) { msg.textContent = 'Il telefono non ha impronta, volto o blocco schermo attivi.'; return; }
+      return navigator.credentials.create({ publicKey: {
+        challenge: rnd(32), rp: { name: 'Bellottrack food fit' }, user: { id: rnd(16), name: 'bellottrack', displayName: 'Bellottrack' },
+        pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+        authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'discouraged' }, timeout: 60000, attestation: 'none'
+      } }).then(function (cred) {
+        try { localStorage.setItem(LK, b2s(cred.rawId)); } catch (e) { msg.textContent = 'Non riesco a salvare il blocco su questo telefono.'; return; }
+        renderLockCard(); msg.textContent = 'Blocco attivo: alla prossima apertura ti chiederò impronta o volto.';
+      });
+    }).catch(function () { msg.textContent = 'Attivazione annullata o non riuscita.'; });
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) hiddenAt = Date.now();
+    else if (lockId() && hiddenAt && Date.now() - hiddenAt > 30000) showLock();
+  });
+
   /* ---------- Avvio ---------- */
   function init() {
-    buildSchedNote(); buildQuick(); buildWater(); buildScheduleCard(); buildWorkoutView(); buildMeasures();
+    buildSchedNote(); buildQuick(); buildWater(); buildScheduleCard(); buildWorkoutView(); buildMeasures(); buildLockCard(); showLock();
     BT.on('fav', toggleFav);
     BT.on('view', function () { renderWorkout(); });
     BT.on('render', function () {

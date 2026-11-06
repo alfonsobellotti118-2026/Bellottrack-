@@ -230,7 +230,7 @@
       var has = card.querySelector('.meal');
       var u = el('button', 'linkbtn', 'Inserisci un pasto salvato'); u.type = 'button'; u.addEventListener('click', function () { useTemplates(slot); }); tools.appendChild(u);
       if (has) { var s = el('button', 'linkbtn', 'Salva questo pasto'); s.type = 'button'; s.addEventListener('click', function () { saveSection(slot); }); tools.appendChild(s); }
-      card.appendChild(tools);
+      (card.querySelector('.mbody') || card).appendChild(tools);
     });
   }
   function renderFavsInSheet() {

@@ -299,6 +299,8 @@
     return li;
   }
 
+  var openSecs = {};
+  try { openSecs = JSON.parse(localStorage.getItem('bt-open-secs') || '{}') || {}; } catch (e) { openSecs = {}; }
   function renderMeals(list) {
     var box = $('sections');
     box.textContent = '';
@@ -309,22 +311,38 @@
       var t = totalsOf(items);
       var card = document.createElement('section'); card.className = 'card msec';
       card.setAttribute('data-slot', sec.key);
+      var open = !!openSecs[sec.key];
       var head = document.createElement('div'); head.className = 'mhead';
+      var tog = document.createElement('button'); tog.type = 'button'; tog.className = 'mtog';
+      tog.setAttribute('aria-expanded', open ? 'true' : 'false');
       var h2 = document.createElement('h2'); h2.appendChild(document.createTextNode(sec.label));
       if (sec.sub) { var sub = document.createElement('span'); sub.className = 'msub'; sub.textContent = sec.sub; h2.appendChild(sub); }
       var sum = document.createElement('div'); sum.className = 'msum';
-      sum.textContent = items.length ? nf(t.kcal) + ' kcal · C ' + fmt1(t.carbs) + ' · P ' + fmt1(t.protein) + ' · G ' + fmt1(t.fat) : 'Nessun alimento';
+      sum.textContent = items.length ? items.length + (items.length === 1 ? ' alimento · ' : ' alimenti · ') + nf(t.kcal) + ' kcal · C ' + fmt1(t.carbs) + ' · P ' + fmt1(t.protein) + ' · G ' + fmt1(t.fat) : 'Nessun alimento';
+      var chev = document.createElement('span'); chev.className = 'chev'; chev.setAttribute('aria-hidden', 'true');
+      chev.innerHTML = '<svg viewBox="0 0 24 24" focusable="false"><path d="M6 9l6 6 6-6"/></svg>';
+      tog.appendChild(h2); tog.appendChild(sum); tog.appendChild(chev);
       var add = document.createElement('button'); add.type = 'button'; add.className = 'addbtn';
       add.setAttribute('aria-label', 'Aggiungi a ' + slotLabel(sec.key));
       add.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>';
       add.addEventListener('click', function () { openSheet(sec.key); });
-      head.appendChild(h2); head.appendChild(add); head.appendChild(sum);
+      head.appendChild(tog); head.appendChild(add);
       card.appendChild(head);
+      var body = document.createElement('div'); body.className = 'mbody'; body.hidden = !open;
       if (items.length) {
         var ul = document.createElement('ul'); ul.className = 'meals';
         items.forEach(function (m) { ul.appendChild(buildMeal(m)); });
-        card.appendChild(ul);
+        body.appendChild(ul);
       }
+      card.appendChild(body);
+      (function (key, bodyEl, togEl) {
+        togEl.addEventListener('click', function () {
+          openSecs[key] = !openSecs[key];
+          bodyEl.hidden = !openSecs[key];
+          togEl.setAttribute('aria-expanded', openSecs[key] ? 'true' : 'false');
+          try { localStorage.setItem('bt-open-secs', JSON.stringify(openSecs)); } catch (e) {}
+        });
+      })(sec.key, body, tog);
       box.appendChild(card);
     });
   }
@@ -350,6 +368,9 @@
     $('results').textContent = '';
     $('search-status').textContent = '';
     closeSheet();
+    openSecs[sectionOf(meal)] = true;
+    try { localStorage.setItem('bt-open-secs', JSON.stringify(openSecs)); } catch (e) {}
+    render();
     toast('Aggiunto a ' + slotLabel(sectionOf(meal)) + ': ' + (meal.name || ''));
   }
 

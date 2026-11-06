@@ -1,9 +1,10 @@
 /* Service worker di Bellottrack food fit: tiene l'app disponibile anche senza connessione. */
-const VERSION = 'bellottrack-food-fit-v14';
+const VERSION = 'bellottrack-food-fit-v15';
 const SHELL = [
   './',
   'index.html',
   'app.js',
+  'foods.js',
   'extras.js',
   'more.js',
   'cloud.js',

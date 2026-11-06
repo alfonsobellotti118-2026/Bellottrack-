@@ -682,7 +682,17 @@
   function localMatches(q) {
     var toks = tokensOf(q);
     if (!toks.length) return [];
-    return BASE.filter(function (b) { var n = norm(b.n + ' ' + (b.k || '')); return toks.every(function (t) { return n.indexOf(t) !== -1; }); }).slice(0, 8).map(baseToProduct);
+    var scored = [];
+    BASE.forEach(function (b, i) {
+      var n = norm(b.n + ' ' + (b.k || '')), hit = 0;
+      toks.forEach(function (t) { if (n.indexOf(t) !== -1) hit++; });
+      if (hit) scored.push({ b: b, hit: hit, i: i });
+    });
+    var full = scored.filter(function (x) { return x.hit === toks.length; });
+    // Se le corrispondenze complete sono poche, aggiungo quelle parziali (stesso tipo di alimento, taglio diverso).
+    var pick = full.length >= 6 || toks.length < 2 ? full : scored;
+    pick.sort(function (a, b) { return (b.hit - a.hit) || (a.i - b.i); });
+    return pick.slice(0, 25).map(function (x) { return baseToProduct(x.b); });
   }
   /* Alimenti gia' usati o tra i preferiti: cosi' un prodotto inserito una volta si ritrova scrivendo il nome. */
   function ownMatches(q) {
@@ -833,7 +843,7 @@
     if (q.length < 2) { st.textContent = 'Scrivi almeno 2 lettere.'; return; }
     var local = localMatches(q);
     var key = norm(q);
-    if (searchCache[key]) { renderResults(local, searchCache[key]); st.textContent = searchCache[key].length || local.length || ownMatches(q).length ? '' : 'Nessun risultato. Inserisci i valori a mano più sotto.'; return; }
+    if (searchCache[key]) { renderResults(local, searchCache[key]); st.textContent = searchCache[key].length || local.length || ownMatches(q).length ? '' : 'Nessun risultato. Inserisci i valori a mano più sotto: l’app ricorderà il prodotto.'; return; }
     renderResults(local, null);
     st.textContent = 'Cerco nel database mondiale…';
     var seq = ++searchSeq;
@@ -842,7 +852,7 @@
       if (seq !== searchSeq) return;
       searchCache[key] = remote;
       renderResults(local, remote);
-      st.textContent = remote.length || local.length || ownMatches(q).length ? (remote.relaxed && remote.length ? 'Non trovo l’esatto prodotto: ti mostro i più simili. Controlla marca e valori sull’etichetta.' : '') : 'Nessun risultato. Prova con meno parole oppure inserisci i valori a mano più sotto.';
+      st.textContent = remote.length || local.length || ownMatches(q).length ? (remote.relaxed && remote.length ? 'Non trovo l’esatto prodotto: ti mostro i più simili. Controlla marca e valori sull’etichetta.' : '') : 'Nessun risultato. Inserisci i valori a mano più sotto: l’app ricorderà il prodotto.';
     } catch (err) {
       if (seq !== searchSeq || (err && err.name === 'AbortError')) return;
       st.textContent = err && err.message === 'busy'

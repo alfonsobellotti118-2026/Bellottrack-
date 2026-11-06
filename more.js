@@ -257,7 +257,12 @@
   }
 
   /* ================= 3. Acqua e integratori ================= */
-  var DEFAULT_SUPPS = ['Creatina', 'Proteine in polvere', 'Omega 3', 'Multivitaminico'];
+  var DEFAULT_SUPPS = [
+    { n: 'Creatina', dose: 5, c: 0, p: 0, f: 0 },
+    { n: 'Proteine in polvere', dose: 30, c: 7, p: 77, f: 6 },
+    { n: 'Omega 3', dose: 2, c: 0, p: 0, f: 100 },
+    { n: 'Multivitaminico', dose: 1, c: 0, p: 0, f: 0 }
+  ];
   function dayInfo(d) { var x = state.daily[d]; return { w: x && x.w > 0 ? x.w : 0, s: x && Array.isArray(x.s) ? x.s : [] }; }
   function setDay(d, info) {
     var daily = Object.assign({}, state.daily); daily[d] = { w: info.w, s: info.s };
@@ -266,19 +271,34 @@
   }
   function buildWater() {
     var card = el('section', 'card'); card.id = 'water-card';
-    card.innerHTML = '<h2>Acqua e integratori</h2><div class="wrow"><span class="watercount" id="w-ml">0</span><span id="w-goal"></span></div><div class="bar" aria-hidden="true" style="margin-top:8px"><i id="w-fill"></i></div>' +
+    card.innerHTML = '<h2>Acqua</h2><div class="wrow"><span class="watercount" id="w-ml">0</span><span id="w-goal"></span></div><div class="bar" aria-hidden="true" style="margin-top:8px"><i id="w-fill"></i></div>' +
       '<div class="quick" style="margin-top:10px"><button class="secondary" type="button" data-w="-250">−250 ml</button><button class="secondary" type="button" data-w="250">+250 ml</button><button class="secondary" type="button" data-w="500">+500 ml</button></div>' +
-      '<div class="suppl" id="supps"></div>' +
-      '<div class="pactions" style="margin-top:10px"><button class="linkbtn" type="button" id="w-edit" style="flex:none">Modifica obiettivo e integratori</button></div>';
+      '<div class="pactions" style="margin-top:10px"><button class="linkbtn" type="button" id="w-edit" style="flex:none">Modifica obiettivo acqua</button></div>';
     var sec = $('sections'); sec.parentNode.insertBefore(card, sec);
     Array.prototype.forEach.call(card.querySelectorAll('[data-w]'), function (b) {
       b.addEventListener('click', function () {
         var i = dayInfo(state.date); i.w = Math.max(0, i.w + Number(b.getAttribute('data-w'))); setDay(state.date, i);
       });
     });
-    $('w-edit').addEventListener('click', editSupps);
+    $('w-edit').addEventListener('click', editWater);
+    var sc = el('section', 'card'); sc.id = 'supp-card';
+    sc.innerHTML = '<h2>Integratori</h2><p class="hintline">Tocca un integratore e scrivi i grammi reali: finisce nel Diario come un alimento e conta nelle calorie e nei macro.</p><div class="suppl" id="supps"></div>' +
+      '<div class="pactions" style="margin-top:10px"><button class="linkbtn" type="button" id="s-edit" style="flex:none">Modifica l’elenco integratori</button></div>';
+    sec.parentNode.insertBefore(sc, sec);
+    $('s-edit').addEventListener('click', editSuppList);
   }
-  function suppList() { return state.suppList && state.suppList.length ? state.suppList : (state.suppList ? [] : DEFAULT_SUPPS); }
+  function suppItems() {
+    var raw = state.suppList;
+    if (!Array.isArray(raw)) return DEFAULT_SUPPS.map(clone);
+    return raw.map(function (x) {
+      if (typeof x === 'string') return { n: x, dose: 5, c: 0, p: 0, f: 0 };
+      return { n: String(x.n || '').slice(0, 30), dose: x.dose > 0 ? x.dose : 5, c: x.c || 0, p: x.p || 0, f: x.f || 0, slot: x.slot };
+    }).filter(function (x) { return x.n; });
+  }
+  function suppGramsToday(n) {
+    var g = 0; BT.dayMeals(state.date).forEach(function (m) { if (m.supp === n) g += m.grams || 0; });
+    return g;
+  }
   function renderWater() {
     if (!$('w-ml')) return;
     var i = dayInfo(state.date), goal = state.waterGoal || 3000;
@@ -286,26 +306,64 @@
     $('w-goal').textContent = 'su ' + BT.fmt1(goal / 1000) + ' L';
     BT.setHeat($('w-fill'), goal ? i.w / goal : 0);
     var box = $('supps'); box.textContent = '';
-    suppList().forEach(function (n) {
-      var on = i.s.indexOf(n) >= 0;
-      var b = el('button', 'sbtn' + (on ? ' on' : ''), (on ? '✓ ' : '') + n); b.type = 'button'; b.setAttribute('aria-pressed', on ? 'true' : 'false');
-      b.addEventListener('click', function () {
-        var inf = dayInfo(state.date), k = inf.s.indexOf(n);
-        if (k >= 0) inf.s.splice(k, 1); else inf.s.push(n);
-        setDay(state.date, inf);
-      });
+    suppItems().forEach(function (it) {
+      var g = suppGramsToday(it.n), on = g > 0;
+      var b = el('button', 'sbtn' + (on ? ' on' : ''), (on ? '✓ ' : '') + it.n + (on ? ' · ' + BT.fmt1(g) + ' g' : '')); b.type = 'button';
+      b.addEventListener('click', function () { logSupp(it); });
       box.appendChild(b);
     });
+    var o = el('button', 'sbtn', '+ Altro'); o.type = 'button'; o.addEventListener('click', function () { logSupp({ n: '', dose: 5, c: 0, p: 0, f: 0, isNew: true }); });
+    box.appendChild(o);
   }
-  function editSupps() {
-    openModal('Acqua e integratori', function (c) {
-      var l1 = el('label', null, 'Obiettivo acqua (litri al giorno)'); var g = el('input'); g.type = 'text'; g.inputMode = 'decimal'; g.value = String((state.waterGoal || 3000) / 1000).replace('.', ','); l1.appendChild(g); c.appendChild(l1);
-      var l2 = el('label', null, 'Integratori (uno per riga)'); var t = el('textarea'); t.rows = 5; t.value = suppList().join('\n');
+  function logSupp(it) {
+    openModal(it.n ? 'Aggiungi ' + it.n : 'Nuovo integratore', function (c) {
+      var fld = function (label, val, mode) { var l = el('label', null, label); var i = el('input'); i.type = 'text'; i.inputMode = mode || 'decimal'; i.value = val; l.appendChild(i); c.appendChild(l); return i; };
+      var nameI = it.n ? null : fld('Nome', '', 'text');
+      var gI = fld('Quantità presa (grammi)', String(it.dose).replace('.', ','));
+      var sl = el('label', null, 'In quale pasto?'); var sel = el('select');
+      BT.SECTIONS.forEach(function (s) { var o = el('option', null, BT.slotLabel(s.key)); o.value = s.key; sel.appendChild(o); });
+      sel.value = it.slot || (BT.modeOf(state.date) === 'on' ? 'post-allenamento' : 'colazione'); sl.appendChild(sel); c.appendChild(sl);
+      c.appendChild(el('p', 'hintline', 'Valori ogni 100 g, come sull’etichetta (facoltativi: lascia 0 per la creatina e simili).'));
+      var row = el('div', 'mgrid'); c.appendChild(row);
+      function sub(label, val) { var l = el('label', null, label); var i = el('input'); i.type = 'text'; i.inputMode = 'decimal'; i.value = val ? String(val).replace('.', ',') : ''; i.placeholder = '0'; l.appendChild(i); row.appendChild(l); return i; }
+      var cI = sub('Carboidrati (g)', it.c), pI = sub('Proteine (g)', it.p), fI = sub('Grassi (g)', it.f);
+      var msg = el('p', 'msg'); msg.setAttribute('role', 'alert'); c.appendChild(msg);
+      var b = el('button', 'primary', 'Aggiungi al diario'); b.type = 'button';
+      b.addEventListener('click', function () {
+        var name = (nameI ? nameI.value : it.n).trim().slice(0, 30), g = BT.num(gI.value);
+        if (!name) { msg.textContent = 'Scrivi il nome.'; return; }
+        if (!(g > 0)) { msg.textContent = 'Scrivi i grammi, ad esempio 5.'; return; }
+        var C = BT.num(cI.value), P = BT.num(pI.value), F = BT.num(fI.value), k100 = BT.kcalFromMacros(C, P, F), x = g / 100;
+        var meal = { id: BT.newId(), date: state.date, slot: sel.value, name: name, createdAt: Date.now(), supp: name, grams: Math.round(g * 10) / 10,
+          per100: { carbs: C, protein: P, fat: F, kcal: k100 }, carbs: Math.round(C * x * 10) / 10, protein: Math.round(P * x * 10) / 10, fat: Math.round(F * x * 10) / 10, kcal: Math.round(k100 * x) };
+        var list = suppItems(), found = false;
+        list = list.map(function (x2) { if (x2.n === name) { found = true; return { n: name, dose: g, c: C, p: P, f: F, slot: sel.value }; } return x2; });
+        if (!found && list.length < 14) list.push({ n: name, dose: g, c: C, p: P, f: F, slot: sel.value });
+        closeModal();
+        save({ suppList: list });
+        BT.addMeal(meal).then(function () { BT.toast('Aggiunto: ' + name + ' ' + BT.fmt1(g) + ' g'); }).catch(function () { BT.toast('Non sono riuscito ad aggiungerlo.', 'err'); });
+      });
+      c.appendChild(b); setTimeout(function () { (nameI || gI).focus(); }, 50);
+    });
+  }
+  function editWater() {
+    openModal('Obiettivo acqua', function (c) {
+      var l1 = el('label', null, 'Litri al giorno'); var g = el('input'); g.type = 'text'; g.inputMode = 'decimal'; g.value = String((state.waterGoal || 3000) / 1000).replace('.', ','); l1.appendChild(g); c.appendChild(l1);
+      var b = el('button', 'primary', 'Salva'); b.type = 'button';
+      b.addEventListener('click', function () { var l = BT.num(g.value); closeModal(); save({ waterGoal: l > 0 && l < 15 ? Math.round(l * 1000) : 0 }); });
+      c.appendChild(b);
+    });
+  }
+  function editSuppList() {
+    openModal('Elenco integratori', function (c) {
+      var l2 = el('label', null, 'Un integratore per riga'); var t = el('textarea'); t.rows = 6; t.value = suppItems().map(function (x) { return x.n; }).join('\n');
       t.style.cssText = 'width:100%;font:inherit;background:var(--raise);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px'; l2.appendChild(t); c.appendChild(l2);
       var b = el('button', 'primary', 'Salva'); b.type = 'button';
       b.addEventListener('click', function () {
-        var l = BT.num(g.value), names = t.value.split('\n').map(function (x) { return x.trim().slice(0, 30); }).filter(Boolean).slice(0, 12);
-        closeModal(); save({ waterGoal: l > 0 && l < 15 ? Math.round(l * 1000) : 0, suppList: names });
+        var old = suppItems(), names = t.value.split('\n').map(function (x) { return x.trim().slice(0, 30); }).filter(Boolean).slice(0, 14), seen = {};
+        var list = [];
+        names.forEach(function (n) { if (seen[n.toLowerCase()]) return; seen[n.toLowerCase()] = 1; var f = old.filter(function (o) { return o.n === n; })[0]; list.push(f || { n: n, dose: 5, c: 0, p: 0, f: 0 }); });
+        closeModal(); save({ suppList: list });
       });
       c.appendChild(b);
     });

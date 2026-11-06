@@ -182,6 +182,12 @@ input::placeholder { color: #6E6E76; }
 .meal .kc { font-family: var(--font-display); font-size: 24px; text-align: right; font-variant-numeric: tabular-nums; line-height: 1.1; }
 .meal .mac { grid-column: 1 / -1; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .meal .mac span + span { margin-left: 10px; }
+.meal .xmac { margin-top: -4px; }
+.xtot { margin-top: 10px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.p100x { margin-top: 4px; font-size: 13px; color: var(--muted); }
+.fmore { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--raise); }
+.fmore summary { font-weight: 700; min-height: 36px; display: flex; align-items: center; }
+.fmore .row { margin-top: 10px; }
 .meal .tools { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 2px; }
 .meal .wg { display: flex; flex-direction: row; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
 .meal .wg input { width: 84px; height: 38px; text-align: right; }
@@ -440,6 +446,7 @@ body.noscroll { overflow: hidden; }
     <div class="bar" aria-hidden="true"><i id="kcal-fill"></i></div>
     <div class="kcal-left" id="kcal-left"></div>
     <div class="macros" id="macros"></div>
+    <div class="xtot" id="xtot" hidden></div>
   </section>
 
   <div class="sheet" id="sheet" hidden>
@@ -463,8 +470,8 @@ body.noscroll { overflow: hidden; }
       Scansiona codice a barre
     </button>
     <div class="code-row">
-      <label for="f-code">Oppure scrivi il codice a barre
-        <input id="f-code" type="text" inputmode="numeric" placeholder="Es. 8001234567890" maxlength="14">
+      <label for="f-code">Oppure scrivi il codice (anche con lettere)
+        <input id="f-code" type="text" inputmode="text" autocapitalize="characters" autocomplete="off" placeholder="Es. 8001234567890 oppure VB104" maxlength="40">
       </label>
       <button class="secondary" id="code-go" type="button">Cerca</button>
     </div>
@@ -531,6 +538,18 @@ body.noscroll { overflow: hidden; }
           <input id="f-fat" type="text" inputmode="decimal" placeholder="0">
         </label>
       </div>
+      <details id="f-more" class="fmore">
+        <summary>Altri valori nutrizionali (facoltativi)</summary>
+        <p class="hintline">Scrivili con lo stesso criterio scelto sopra (per 100 g o tutta la porzione), come sull’etichetta.</p>
+        <div class="row two">
+          <label for="f-sugar">di cui zuccheri (g)<input id="f-sugar" type="text" inputmode="decimal" placeholder="0"></label>
+          <label for="f-sat">di cui grassi saturi (g)<input id="f-sat" type="text" inputmode="decimal" placeholder="0"></label>
+        </div>
+        <div class="row two">
+          <label for="f-fiber">Fibre (g)<input id="f-fiber" type="text" inputmode="decimal" placeholder="0"></label>
+          <label for="f-salt">Sale (g)<input id="f-salt" type="text" inputmode="decimal" placeholder="0"></label>
+        </div>
+      </details>
       <label for="f-kcal">Calorie (opzionale, se vuoto le calcolo dai macro)
         <input id="f-kcal" type="text" inputmode="decimal" placeholder="Calcolate in automatico">
       </label>

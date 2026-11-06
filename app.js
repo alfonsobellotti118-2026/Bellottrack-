@@ -680,13 +680,13 @@
   var searchSeq = 0;
 
   function localMatches(q) {
-    var toks = norm(q).split(/\s+/).filter(Boolean);
+    var toks = tokensOf(q);
     if (!toks.length) return [];
     return BASE.filter(function (b) { var n = norm(b.n + ' ' + (b.k || '')); return toks.every(function (t) { return n.indexOf(t) !== -1; }); }).slice(0, 8).map(baseToProduct);
   }
   /* Alimenti gia' usati o tra i preferiti: cosi' un prodotto inserito una volta si ritrova scrivendo il nome. */
   function ownMatches(q) {
-    var toks = norm(q).split(/\s+/).filter(Boolean);
+    var toks = tokensOf(q);
     if (!toks.length) return [];
     var seen = {}, out = [];
     var pool = (state.favs || []).concat(state.meals.slice().sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); }));
@@ -737,16 +737,50 @@
     section('Database mondiale', remote);
   }
 
+  var STOP = { del: 1, dal: 1, di: 1, da: 1, della: 1, dello: 1, dei: 1, delle: 1, dalla: 1, dalle: 1, il: 1, lo: 1, la: 1, le: 1, gli: 1, un: 1, una: 1, e: 1, al: 1, alla: 1, con: 1, the: 1 };
+  function sigTokens(q) { return norm(q).split(/[^a-z0-9]+/).filter(function (t) { return t && !STOP[t]; }); }
+  function scoreOf(p, toks) {
+    var hay = norm(p.name + ' ' + p.brand + ' ' + p.quantity), sc = 0;
+    toks.forEach(function (t) { if (hay.indexOf(t) !== -1) sc++; });
+    return sc;
+  }
+  function offFetch(terms, italy, sig) {
+    var fields = 'code,product_name,product_name_it,generic_name,brands,quantity,serving_quantity,nutriments,allergens_tags';
+    var url = 'https://world.openfoodfacts.org/cgi/search.pl?search_terms=' + encodeURIComponent(terms) +
+      '&search_simple=1&action=process&json=1&page_size=30&sort_by=unique_scans_n&fields=' + fields +
+      (italy ? '&tagtype_0=countries&tag_contains_0=contains&tag_0=italy' : '');
+    return fetch(url, { headers: { 'Accept': 'application/json' }, signal: sig }).then(function (res) {
+      if (res.status === 429 || res.status === 503) throw new Error('busy');
+      if (!res.ok) throw new Error('http');
+      return res.json();
+    }).then(function (d) { return { ok: true, list: d.products || [] }; }, function (e) {
+      if (e && e.name === 'AbortError') throw e;
+      return { ok: false, err: e };
+    });
+  }
+  var STOP = { di: 1, del: 1, dal: 1, della: 1, dello: 1, dei: 1, delle: 1, da: 1, e: 1, il: 1, la: 1, lo: 1, le: 1, un: 1, una: 1, con: 1, al: 1, alla: 1, in: 1, a: 1, per: 1, the: 1, of: 1 };
+  function tokensOf(q) {
+    var all = norm(q).split(/[^a-z0-9]+/).filter(Boolean);
+    var t = all.filter(function (x) { return !STOP[x]; });
+    return t.length ? t : all;
+  }
+  function scoreOf(p, toks) {
+    var hay = norm(p.name + ' ' + (p.brand || '') + ' ' + (p.quantity || '')), n = 0;
+    toks.forEach(function (t) { if (hay.indexOf(t) !== -1) n++; });
+    return n;
+  }
   async function remoteSearch(q) {
     if (searchAbort) { try { searchAbort.abort(); } catch (e) {} }
     searchAbort = typeof AbortController !== 'undefined' ? new AbortController() : null;
     var sig = searchAbort ? searchAbort.signal : undefined;
+    var toks = tokensOf(q);
     var fields = 'code,product_name,product_name_it,generic_name,brands,quantity,serving_quantity,nutriments,allergens_tags';
-    var base = 'https://world.openfoodfacts.org/cgi/search.pl?search_terms=' + encodeURIComponent(q) +
-      '&search_simple=1&action=process&json=1&page_size=30&sort_by=unique_scans_n&fields=' + fields;
-    // Una ricerca pensata per l'Italia (prodotti italiani per primi) e una mondiale.
-    var urls = [base + '&tagtype_0=countries&tag_contains_0=contains&tag_0=italy', base];
-    var results = await Promise.all(urls.map(function (u) {
+    function url(terms, italy) {
+      return 'https://world.openfoodfacts.org/cgi/search.pl?search_terms=' + encodeURIComponent(terms) +
+        '&search_simple=1&action=process&json=1&page_size=30&sort_by=unique_scans_n&fields=' + fields +
+        (italy ? '&tagtype_0=countries&tag_contains_0=contains&tag_0=italy' : '');
+    }
+    function run(u) {
       return fetch(u, { headers: { 'Accept': 'application/json' }, signal: sig }).then(function (res) {
         if (res.status === 429 || res.status === 503) throw new Error('busy');
         if (!res.ok) throw new Error('http');
@@ -755,16 +789,33 @@
         if (e && e.name === 'AbortError') throw e;
         return { ok: false, err: e };
       });
-    }));
-    if (!results[0].ok && !results[1].ok) throw results[1].err || new Error('http');
+    }
     var seen = {}, out = [];
-    results.forEach(function (r) {
-      (r.list || []).forEach(function (pr) {
-        var code = String(pr.code || ''); if (seen[code]) return; seen[code] = 1;
-        var p = parseProduct(code, pr); if (usable(p)) out.push(p);
+    function collect(results) {
+      results.forEach(function (r) {
+        (r.list || []).forEach(function (pr) {
+          var code = String(pr.code || ''); if (seen[code]) return; seen[code] = 1;
+          var p = parseProduct(code, pr); if (usable(p)) out.push(p);
+        });
       });
-    });
-    return out.slice(0, 30);
+    }
+    var first = await Promise.all([run(url(toks.join(' '), true)), run(url(toks.join(' '), false))]);
+    if (!first[0].ok && !first[1].ok) throw first[1].err || new Error('http');
+    collect(first);
+    var relaxed = false;
+    // Pochi risultati: provo con meno parole (di solito la marca sta in fondo, il tipo di prodotto all'inizio).
+    if (out.length < 6 && toks.length >= 2) {
+      var tries = [];
+      if (toks.length >= 3) { tries.push(toks.slice(0, -1).join(' ')); tries.push(toks.slice(-2).join(' ')); }
+      else { tries.push(toks[toks.length - 1]); }
+      var more = await Promise.all(tries.map(function (t) { return run(url(t, false)); }));
+      var before = out.length; collect(more); relaxed = out.length > before;
+    }
+    out.forEach(function (p, i) { p._i = i; });
+    out.sort(function (a, b) { return (scoreOf(b, toks) - scoreOf(a, toks)) || (a._i - b._i); });
+    var res = out.slice(0, 30);
+    res.relaxed = relaxed;
+    return res;
   }
 
   function onSearchInput() {
@@ -791,7 +842,7 @@
       if (seq !== searchSeq) return;
       searchCache[key] = remote;
       renderResults(local, remote);
-      st.textContent = remote.length || local.length || ownMatches(q).length ? '' : 'Nessun risultato. Prova con meno parole oppure inserisci i valori a mano più sotto.';
+      st.textContent = remote.length || local.length || ownMatches(q).length ? (remote.relaxed && remote.length ? 'Non trovo l’esatto prodotto: ti mostro i più simili. Controlla marca e valori sull’etichetta.' : '') : 'Nessun risultato. Prova con meno parole oppure inserisci i valori a mano più sotto.';
     } catch (err) {
       if (seq !== searchSeq || (err && err.name === 'AbortError')) return;
       st.textContent = err && err.message === 'busy'
@@ -1099,6 +1150,20 @@
   $('f-basis').addEventListener('change', updatePreview);
   T_IDS.forEach(function (x) { $('t-' + x[0] + '-' + x[1]).addEventListener('input', updateTargetHint); });
   $('t-save').addEventListener('click', onSaveTargets);
+  (function () {
+    var chips = $('brand-chips'); if (!chips) return;
+    ['Eurospin', 'Lidl', 'Coop', 'Conad', 'MD', 'Despar', 'Esselunga', 'Carrefour', 'Aldi', 'Penny'].forEach(function (b) {
+      var c = document.createElement('button'); c.type = 'button'; c.className = 'chip'; c.textContent = b;
+      c.addEventListener('click', function () {
+        var q = $('q').value.trim();
+        var re = new RegExp('(^|\\s)' + b + '(?=\\s|$)', 'i');
+        $('q').value = re.test(q) ? q.replace(re, ' ').replace(/\s+/g, ' ').trim() : (q + ' ' + b).trim();
+        if ($('q').value.length >= 2) $('search-form').requestSubmit ? $('search-form').requestSubmit() : onSearchSubmit({ preventDefault: function () {} });
+        else $('q').focus();
+      });
+      chips.appendChild(c);
+    });
+  })();
   $('search-form').addEventListener('submit', onSearchSubmit);
   $('q').addEventListener('input', onSearchInput);
   $('scan-btn').addEventListener('click', openScanner);

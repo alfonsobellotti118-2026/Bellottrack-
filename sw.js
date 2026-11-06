@@ -1,5 +1,5 @@
 /* Service worker di Bellottrack food fit: tiene l'app disponibile anche senza connessione. */
-const VERSION = 'bellottrack-food-fit-v15';
+const VERSION = 'bellottrack-food-fit-v16';
 const SHELL = [
   './',
   'index.html',
@@ -7,6 +7,7 @@ const SHELL = [
   'foods.js',
   'extras.js',
   'more.js',
+  'vision.js',
   'cloud.js',
   'firebase-config.js',
   'manifest.webmanifest',

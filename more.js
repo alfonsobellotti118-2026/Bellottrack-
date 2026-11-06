@@ -385,6 +385,9 @@
       '<section class="card"><h2>Ultimi allenamenti</h2><ul class="hist" id="wk-hist" style="margin-top:6px"></ul></section>';
     prof.parentNode.insertBefore(v, prof);
     wkEl = v;
+    var pc = el('section', 'card'); pc.id = 'plan-card';
+    pc.innerHTML = '<h2>La mia scheda</h2><p class="hintline" id="plan-hint"></p><div id="plan-days" style="display:flex;flex-direction:column;gap:10px;margin-top:10px"></div><div class="pactions" id="plan-actions" style="margin-top:10px"></div>';
+    v.insertBefore(pc, v.querySelectorAll('section.card')[1]);
     $('wk-add').addEventListener('submit', function (e) {
       e.preventDefault(); var n = $('wk-ex').value.trim(); if (!n) return;
       var s = ensureSession(); s.ex.push({ n: n.slice(0, 40), sets: [] }); $('wk-ex').value = ''; commitWorkout(true);
@@ -437,6 +440,39 @@
     });
     if (!s.name) s.name = prev.name || '';
     commitWorkout(true);
+  }
+  function useDay(day) {
+    var s = ensureSession();
+    if (!s.name) s.name = day.n || '';
+    day.ex.forEach(function (e) {
+      var have = s.ex.some(function (x) { return x.n.toLowerCase() === e.n.toLowerCase(); });
+      if (have) return;
+      var lt = lastTime(e.n, state.date), kg = (lt && lt.sets[0] && lt.sets[0].kg) || e.kg || 0, n = Math.max(1, Math.min(12, e.sets || 3));
+      var sets = []; for (var i = 0; i < n; i++) sets.push({ r: e.reps || 0, kg: kg });
+      s.ex.push({ n: e.n, sets: sets });
+    });
+    commitWorkout(true);
+    BT.toast('Allenamento preparato: ' + (day.n || 'giorno'));
+  }
+  function renderPlan() {
+    var days = $('plan-days'); if (!days) return;
+    days.textContent = '';
+    $('plan-hint').textContent = state.plan.length ? 'Tocca «Usa oggi» per preparare l’allenamento del giorno: serie e ripetizioni sono già pronte, tu scrivi i chili.' :
+      'Non hai ancora una scheda. Fotografa quella del tuo trainer (o carica una foto): l’AI la legge e la aggiunge qui.';
+    state.plan.forEach(function (d, i) {
+      var row = el('div', 'mitem'); var left = el('div');
+      left.appendChild(el('div', 'mt', d.n || ('Giorno ' + (i + 1))));
+      left.appendChild(el('div', 'ms', d.ex.length + (d.ex.length === 1 ? ' esercizio' : ' esercizi') + ': ' + d.ex.slice(0, 3).map(function (e) { return e.n; }).join(', ') + (d.ex.length > 3 ? '…' : '')));
+      var b = el('button', 'primary', 'Usa oggi'); b.type = 'button'; b.style.height = '40px'; b.style.flex = 'none';
+      b.addEventListener('click', function () { useDay(d); });
+      row.appendChild(left); row.appendChild(b); days.appendChild(row);
+    });
+    var act = $('plan-actions'), old = act.querySelector('.plan-del'); if (old) old.remove();
+    if (state.plan.length) {
+      var del = el('button', 'linkbtn plan-del', 'Elimina la scheda'); del.type = 'button'; del.style.flex = 'none';
+      del.addEventListener('click', function () { if (del.getAttribute('data-armed')) { save({ plan: [] }); } else { del.setAttribute('data-armed', '1'); del.textContent = 'Tocca ancora per confermare'; setTimeout(function () { del.removeAttribute('data-armed'); del.textContent = 'Elimina la scheda'; }, 3000); } });
+      act.appendChild(del);
+    }
   }
   function e1rm(kg, r) { return r <= 1 ? kg : kg * (1 + r / 30); }
   function renderWorkout() {
@@ -732,10 +768,10 @@
     BT.on('fav', toggleFav);
     BT.on('view', function () { renderWorkout(); });
     BT.on('render', function () {
-      renderSched(); renderScheduleCard(); decorateMeals(); renderFavsInSheet(); renderWater(); renderWorkout(); renderMeasures();
+      renderSched(); renderScheduleCard(); decorateMeals(); renderFavsInSheet(); renderWater(); renderWorkout(); renderPlan(); renderMeasures();
     });
     BT.emit('render');
   }
   init();
-  window.BTM = { drawCard: drawCard, navyBf: navyBf, openShare: openShare };
+  window.BTM = { drawCard: drawCard, navyBf: navyBf, openShare: openShare, savePlan: function (p) { return save({ plan: p }); }, hasPlan: function () { return state.plan.length > 0; } };
 })();

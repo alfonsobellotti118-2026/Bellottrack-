@@ -431,6 +431,8 @@
     esc: esc, el: el, clamp: clamp, say: say, isDate: isDate, profOK: profOK, lastWeight: lastWeight, withWeight: withWeight, profileWith: profileWith,
     LEVELS: LEVELS, EXP_CAP: EXP_CAP, bmrOf: bmrOf, recentIntake: recentIntake, createGoal: createGoal, goalTitle: goalTitle, GT: GT, fillProfile: fillProfile
   };
+  X.aiReady = function () { return !!(cloud && user); };
+  X.ai = function (prompt, image) { return cloud && user ? cloud.ask(prompt, image) : Promise.reject(new Error('no-ai')); };
   window.BTX = X;
 
   B.on('render', function () {

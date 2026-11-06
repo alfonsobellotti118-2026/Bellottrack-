@@ -50,7 +50,7 @@ export async function initCloud(cfg) {
       };
     },
 
-    async ask(prompt) {
+    async ask(prompt, image) {
       const { getAI, getGenerativeModel, GoogleAIBackend, ThinkingLevel } = await import('https://www.gstatic.com/firebasejs/12.19.0/firebase-ai.js');
       if (!ai) ai = getAI(app, { backend: new GoogleAIBackend() });
       // Se il modello e' sovraccarico, prova il successivo dell'elenco.
@@ -67,7 +67,7 @@ export async function initCloud(cfg) {
             }
             models[name] = getGenerativeModel(ai, { model: name, generationConfig });
           }
-          const r = await models[name].generateContent(prompt);
+          const r = await models[name].generateContent(image ? [prompt, { inlineData: { mimeType: image.mimeType, data: image.data } }] : prompt);
           return r.response.text();
         } catch (e) {
           last = e;

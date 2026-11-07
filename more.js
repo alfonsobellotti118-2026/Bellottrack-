@@ -55,6 +55,7 @@
     '.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}' +
     '.igprev{width:100%;height:auto;border-radius:10px;border:1px solid var(--line);display:block}' +
     '.mcard .pactions>button{min-height:44px}' +
+    '[hidden]{display:none!important}' +
     '#lock{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}#lock[hidden]{display:none}' +
     '.lockbox{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;max-width:360px}.lockbox h1{margin:0}.lockbox p{margin:0;color:var(--muted)}';
   var st = el('style'); st.textContent = css; document.head.appendChild(st);
@@ -386,8 +387,12 @@
     prof.parentNode.insertBefore(v, prof);
     wkEl = v;
     var pc = el('section', 'card'); pc.id = 'plan-card';
-    pc.innerHTML = '<h2>La mia scheda</h2><p class="hintline" id="plan-hint"></p><div id="plan-days" style="display:flex;flex-direction:column;gap:10px;margin-top:10px"></div><div class="pactions" id="plan-actions" style="margin-top:10px"></div>';
+    pc.innerHTML = '<h2>Le mie schede</h2><p class="hintline" id="plan-hint"></p><label for="plan-sel" id="plan-pick" hidden>Scheda in uso<select id="plan-sel"></select></label><div id="plan-days" style="display:flex;flex-direction:column;gap:10px;margin-top:10px"></div><div class="pactions" id="plan-actions" style="margin-top:10px"><button class="secondary" type="button" id="plan-new">Nuova scheda</button><button class="secondary" type="button" id="plan-edit">Modifica</button></div><div style="margin-top:6px"><button class="linkbtn" type="button" id="plan-del">Elimina scheda</button></div>';
     v.insertBefore(pc, v.querySelectorAll('section.card')[1]);
+    $('plan-sel').addEventListener('change', function () { setSel($('plan-sel').value); renderPlan(); });
+    $('plan-new').addEventListener('click', function () { editPlan(null); });
+    $('plan-edit').addEventListener('click', function () { var c = selPlan(); if (c) editPlan(c.id); });
+    $('plan-del').addEventListener('click', deletePlan);
     $('wk-add').addEventListener('submit', function (e) {
       e.preventDefault(); var n = $('wk-ex').value.trim(); if (!n) return;
       var s = ensureSession(); s.ex.push({ n: n.slice(0, 40), sets: [] }); $('wk-ex').value = ''; commitWorkout(true);
@@ -441,6 +446,31 @@
     if (!s.name) s.name = prev.name || '';
     commitWorkout(true);
   }
+  /* ---- Schede di allenamento (piu' schede, ognuna con piu' giorni) ---- */
+  var SELK = 'bt-plan-sel';
+  function selId() { try { return localStorage.getItem(SELK) || ''; } catch (e) { return ''; } }
+  function setSel(id) { try { localStorage.setItem(SELK, id); } catch (e) {} }
+  function selPlan() {
+    var id = selId(), list = state.plans;
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+    return list[0] || null;
+  }
+  function normPlanObj(w) {
+    var days = (w.days || []).map(function (d, i) {
+      return { n: String(d.n || ('Giorno ' + (i + 1))).trim().slice(0, 40), ex: (d.ex || []).map(function (e) {
+        var n = String(e.n || '').trim().slice(0, 40); if (!n) return null;
+        return { n: n, sets: Math.max(1, Math.min(20, Math.round(BT.num(e.sets)) || 3)), reps: Math.max(0, Math.min(100, Math.round(BT.num(e.reps)) || 0)), kg: BT.num(e.kg) || 0 };
+      }).filter(Boolean).slice(0, 25) };
+    }).filter(function (d) { return d.ex.length; }).slice(0, 10);
+    return { id: w.id || BT.newId(), name: String(w.name || 'Scheda').trim().slice(0, 40) || 'Scheda', days: days };
+  }
+  function addPlan(name, days) {
+    var p = normPlanObj({ name: name, days: days });
+    if (!p.days.length) return Promise.resolve();
+    var list = state.plans.filter(function (x) { return x.id !== p.id; }).concat([p]).slice(-20);
+    setSel(p.id);
+    return save({ plans: list });
+  }
   function useDay(day) {
     var s = ensureSession();
     if (!s.name) s.name = day.n || '';
@@ -454,12 +484,27 @@
     commitWorkout(true);
     BT.toast('Allenamento preparato: ' + (day.n || 'giorno'));
   }
+  function migratePlan() {
+    if (state.plan.length && !state.plans.length) {
+      var p = normPlanObj({ name: 'La mia scheda', days: state.plan });
+      state.plans = [p]; state.plan = [];
+      save({ plans: [p], plan: [] });
+    }
+  }
   function renderPlan() {
     var days = $('plan-days'); if (!days) return;
+    migratePlan();
     days.textContent = '';
-    $('plan-hint').textContent = state.plan.length ? 'Tocca «Usa oggi» per preparare l’allenamento del giorno: serie e ripetizioni sono già pronte, tu scrivi i chili.' :
-      'Non hai ancora una scheda. Fotografa quella del tuo trainer (o carica una foto): l’AI la legge e la aggiunge qui.';
-    state.plan.forEach(function (d, i) {
+    var sel = $('plan-sel'), cur = selPlan();
+    sel.textContent = '';
+    state.plans.forEach(function (p) { var o = el('option', null, p.name + ' (' + p.days.length + (p.days.length === 1 ? ' giorno' : ' giorni') + ')'); o.value = p.id; sel.appendChild(o); });
+    $('plan-pick').hidden = !state.plans.length;
+    $('plan-edit').hidden = !cur; $('plan-del').hidden = !cur;
+    if (cur) sel.value = cur.id;
+    $('plan-hint').textContent = cur ? 'Scegli la scheda e tocca «Usa oggi» sul giorno che fai: serie e ripetizioni sono già pronte, tu scrivi i chili.' :
+      'Non hai ancora schede. Fotografa quella del tuo trainer, oppure creane una a mano con «Nuova scheda». Puoi tenerne quante vuoi.';
+    if (!cur) return;
+    cur.days.forEach(function (d, i) {
       var row = el('div', 'mitem'); var left = el('div');
       left.appendChild(el('div', 'mt', d.n || ('Giorno ' + (i + 1))));
       left.appendChild(el('div', 'ms', d.ex.length + (d.ex.length === 1 ? ' esercizio' : ' esercizi') + ': ' + d.ex.slice(0, 3).map(function (e) { return e.n; }).join(', ') + (d.ex.length > 3 ? '…' : '')));
@@ -467,12 +512,57 @@
       b.addEventListener('click', function () { useDay(d); });
       row.appendChild(left); row.appendChild(b); days.appendChild(row);
     });
-    var act = $('plan-actions'), old = act.querySelector('.plan-del'); if (old) old.remove();
-    if (state.plan.length) {
-      var del = el('button', 'linkbtn plan-del', 'Elimina la scheda'); del.type = 'button'; del.style.flex = 'none';
-      del.addEventListener('click', function () { if (del.getAttribute('data-armed')) { save({ plan: [] }); } else { del.setAttribute('data-armed', '1'); del.textContent = 'Tocca ancora per confermare'; setTimeout(function () { del.removeAttribute('data-armed'); del.textContent = 'Elimina la scheda'; }, 3000); } });
-      act.appendChild(del);
-    }
+  }
+  function editPlan(id) {
+    var base = id ? state.plans.filter(function (p) { return p.id === id; })[0] : null;
+    var work = base ? clone(base) : { id: BT.newId(), name: 'Nuova scheda', days: [{ n: 'Giorno A', ex: [{ n: '', sets: 3, reps: 10, kg: 0 }] }] };
+    openModal(base ? 'Modifica scheda' : 'Nuova scheda', function (c) {
+      var holder = el('div'); holder.style.cssText = 'display:flex;flex-direction:column;gap:12px'; c.appendChild(holder);
+      var msg = el('p', 'msg'); msg.setAttribute('role', 'alert'); c.appendChild(msg);
+      function tin(val, ph, mode, w) { var i = el('input'); i.type = 'text'; i.inputMode = mode || 'text'; i.value = (val === null || val === undefined || (mode === 'decimal' && !(val > 0))) ? '' : String(val).replace('.', ','); i.placeholder = ph || ''; if (w) i.style.minWidth = '0'; return i; }
+      function draw() {
+        holder.textContent = '';
+        var l = el('label', null, 'Nome della scheda'); var ni = tin(work.name, 'Es. Scheda massa 4 giorni'); ni.maxLength = 40; ni.addEventListener('input', function () { work.name = ni.value; }); l.appendChild(ni); holder.appendChild(l);
+        work.days.forEach(function (d, di) {
+          var box = el('div', 'ex');
+          var h = el('div', 'exh'); var dn = tin(d.n, 'Nome del giorno'); dn.maxLength = 40; dn.style.flex = '1'; dn.addEventListener('input', function () { d.n = dn.value; });
+          var dd = el('button', 'sbtn', 'Elimina giorno'); dd.type = 'button'; dd.addEventListener('click', function () { work.days.splice(di, 1); draw(); });
+          h.appendChild(dn); h.appendChild(dd); box.appendChild(h);
+          d.ex.forEach(function (e, ei) {
+            var er = el('div'); er.style.cssText = 'display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:8px';
+            var en = tin(e.n, 'Esercizio'); en.maxLength = 40; en.setAttribute('list', 'wk-exlist'); en.addEventListener('input', function () { e.n = en.value; });
+            var g = el('div'); g.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr 44px;gap:8px;align-items:end';
+            function num3(lbl, key) { var w = el('label', null, lbl); w.style.fontSize = '12px'; var i = tin(e[key] > 0 ? e[key] : '', '0', 'decimal', true); i.addEventListener('input', function () { e[key] = BT.num(i.value); }); w.appendChild(i); return w; }
+            g.appendChild(num3('Serie', 'sets')); g.appendChild(num3('Ripetiz.', 'reps')); g.appendChild(num3('Kg', 'kg'));
+            var rm = el('button', 'rm', '✕'); rm.type = 'button'; rm.setAttribute('aria-label', 'Elimina esercizio'); rm.style.cssText = 'border:0;background:none;color:var(--muted);font-size:20px;min-height:44px';
+            rm.addEventListener('click', function () { d.ex.splice(ei, 1); draw(); });
+            g.appendChild(rm); er.appendChild(en); er.appendChild(g); box.appendChild(er);
+          });
+          var ae = el('button', 'secondary', '+ Esercizio'); ae.type = 'button'; ae.addEventListener('click', function () { d.ex.push({ n: '', sets: 3, reps: 10, kg: 0 }); draw(); });
+          box.appendChild(ae); holder.appendChild(box);
+        });
+        var ad = el('button', 'secondary', '+ Giorno'); ad.type = 'button'; ad.addEventListener('click', function () { work.days.push({ n: 'Giorno ' + String.fromCharCode(65 + work.days.length), ex: [{ n: '', sets: 3, reps: 10, kg: 0 }] }); draw(); });
+        holder.appendChild(ad);
+      }
+      draw();
+      var ok = el('button', 'primary', 'Salva la scheda'); ok.type = 'button';
+      ok.addEventListener('click', function () {
+        var p = normPlanObj(work);
+        if (!p.days.length) { msg.textContent = 'Scrivi almeno un esercizio.'; return; }
+        var list = state.plans.filter(function (x) { return x.id !== p.id; });
+        if (base) { var idx = state.plans.indexOf(base); list = state.plans.slice(); list[idx] = p; } else list.push(p);
+        setSel(p.id); closeModal(); save({ plans: list.slice(-20) }).then(function () { BT.toast('Scheda salvata: ' + p.name); });
+      });
+      c.appendChild(ok);
+    });
+  }
+  var delArm = null;
+  function deletePlan() {
+    var cur = selPlan(); if (!cur) return;
+    var b = $('plan-del');
+    if (!b.getAttribute('data-armed')) { b.setAttribute('data-armed', '1'); b.textContent = 'Tocca ancora per eliminare'; clearTimeout(delArm); delArm = setTimeout(function () { b.removeAttribute('data-armed'); b.textContent = 'Elimina scheda'; }, 3000); return; }
+    clearTimeout(delArm); b.removeAttribute('data-armed'); b.textContent = 'Elimina scheda';
+    save({ plans: state.plans.filter(function (p) { return p.id !== cur.id; }) });
   }
   function e1rm(kg, r) { return r <= 1 ? kg : kg * (1 + r / 30); }
   function renderWorkout() {
@@ -773,5 +863,5 @@
     BT.emit('render');
   }
   init();
-  window.BTM = { drawCard: drawCard, navyBf: navyBf, openShare: openShare, savePlan: function (p) { return save({ plan: p }); }, hasPlan: function () { return state.plan.length > 0; } };
+  window.BTM = { drawCard: drawCard, navyBf: navyBf, openShare: openShare, addPlan: addPlan, plansCount: function () { return state.plans.length; } };
 })();

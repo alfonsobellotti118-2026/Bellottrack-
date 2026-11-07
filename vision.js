@@ -138,7 +138,8 @@
     var back = el('div', 'mback'); back.setAttribute('role', 'dialog'); back.setAttribute('aria-modal', 'true');
     var card = el('div', 'mcard'); back.appendChild(card);
     card.appendChild(el('h2', null, 'Ho letto questa scheda'));
-    card.appendChild(el('p', 'hintline', 'Controlla che sia giusta. Puoi correggere serie e chili anche dopo, nella scheda del giorno.'));
+    card.appendChild(el('p', 'hintline', 'Controlla che sia giusta. Dopo il salvataggio puoi modificarla con «Modifica».'));
+    var lab = el('label', null, 'Nome della scheda'); var ni = el('input'); ni.type = 'text'; ni.maxLength = 40; ni.value = 'Scheda ' + (window.BTM.plansCount() + 1); lab.appendChild(ni); card.appendChild(lab);
     plan.forEach(function (d) {
       var b = el('div', 'ex'); b.appendChild(el('b', null, d.n));
       d.ex.forEach(function (e) { b.appendChild(el('div', 'exlast', e.n + ' · ' + e.sets + ' × ' + (e.reps || '?') + (e.kg ? ' · ' + e.kg + ' kg' : ''))); });
@@ -147,10 +148,11 @@
     var row = el('div', 'pactions');
     var ok = el('button', 'primary', 'Salva la scheda'); ok.type = 'button';
     var no = el('button', 'secondary', 'Annulla'); no.type = 'button';
-    ok.addEventListener('click', function () { back.remove(); document.body.classList.remove('noscroll'); window.BTM.savePlan(plan).then(function () { BT.toast('Scheda salvata: ' + plan.length + (plan.length === 1 ? ' giorno' : ' giorni')); }); });
-    no.addEventListener('click', function () { back.remove(); document.body.classList.remove('noscroll'); });
+    function close() { back.remove(); document.body.classList.remove('noscroll'); }
+    ok.addEventListener('click', function () { var nm = ni.value.trim() || 'Scheda'; close(); window.BTM.addPlan(nm, plan.map(function (d) { return { n: d.n, ex: d.ex }; })).then(function () { BT.toast('Scheda salvata: ' + nm); }); });
+    no.addEventListener('click', close);
     row.appendChild(ok); row.appendChild(no); card.appendChild(row);
-    document.body.appendChild(back); document.body.classList.add('noscroll'); ok.focus();
+    document.body.appendChild(back); document.body.classList.add('noscroll'); ni.focus();
   }
   function planFrom(capture) {
     pickFile(capture).then(function (f) {

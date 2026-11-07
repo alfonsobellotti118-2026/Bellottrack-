@@ -66,9 +66,9 @@
     { n: 'Carote', c: 7, p: 1, f: 0.2 }
   ];
 
-  var state = { meals: [], presets: JSON.parse(JSON.stringify(DEFAULTS)), modes: {}, profile: null, weights: [], goals: [], schedule: null, templates: [], favs: [], workouts: [], measures: [], plan: [], daily: {}, suppList: null, waterGoal: 0, date: todayStr(), mealsReady: false, settingsReady: false };
+  var state = { meals: [], presets: JSON.parse(JSON.stringify(DEFAULTS)), modes: {}, profile: null, weights: [], goals: [], schedule: null, templates: [], favs: [], workouts: [], measures: [], plan: [], plans: [], daily: {}, suppList: null, waterGoal: 0, date: todayStr(), mealsReady: false, settingsReady: false };
   var DEFAULT_SCHEDULE = { days: [1, 3, 5], since: '2026-11-05' };
-  var EXTRA_ARR = ['templates', 'favs', 'workouts', 'measures', 'plan'];
+  var EXTRA_ARR = ['templates', 'favs', 'workouts', 'measures', 'plan', 'plans'];
   var listeners = {};
   function on(evt, fn) { (listeners[evt] = listeners[evt] || []).push(fn); }
   function emit(evt, a) { (listeners[evt] || []).slice().forEach(function (fn) { try { fn(a); } catch (e) { if (window.console) console.error(e); } }); }
@@ -608,7 +608,7 @@
   }
   function composeSettings() {
     return { presets: state.presets, modes: state.modes, profile: state.profile, weights: state.weights, goals: state.goals,
-      schedule: state.schedule || DEFAULT_SCHEDULE, templates: state.templates, favs: state.favs, workouts: state.workouts, measures: state.measures, plan: state.plan,
+      schedule: state.schedule || DEFAULT_SCHEDULE, templates: state.templates, favs: state.favs, workouts: state.workouts, measures: state.measures, plan: state.plan, plans: state.plans,
       daily: state.daily, suppList: state.suppList, waterGoal: state.waterGoal || 0 };
   }
   /* Cambia una parte delle impostazioni, la applica subito e la salva. */
@@ -631,7 +631,7 @@
     store = next;
     state.meals = []; state.mealsReady = false; state.settingsReady = false;
     state.profile = null; state.weights = []; state.goals = []; state.modes = {};
-    state.schedule = null; state.templates = []; state.favs = []; state.workouts = []; state.measures = []; state.plan = []; state.daily = {}; state.suppList = null; state.waterGoal = 0;
+    state.schedule = null; state.templates = []; state.favs = []; state.workouts = []; state.measures = []; state.plan = []; state.plans = []; state.daily = {}; state.suppList = null; state.waterGoal = 0;
     state.presets = JSON.parse(JSON.stringify(DEFAULTS));
     $('sync').textContent = next.kind === 'cloud' ? 'Sincronizzazione…' : '';
     render();
